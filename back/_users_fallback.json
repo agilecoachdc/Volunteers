@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "email": "yoanl@dummy.com",
+        "name": "Yoan Labat",
+        "first_name": "Yoan",
+        "last_name": "Labat",
+        "role": "benevole",
+        "is_active": 1,
+        "poste": "juge",
+        "created_at": 1761857459,
+        "source": "fallback-json"
+    }
+]

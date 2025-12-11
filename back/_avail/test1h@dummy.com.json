@@ -1,0 +1,12 @@
+{
+    "email": "test1h@dummy.com",
+    "avail": {
+        "samedi 20:30": "dispo",
+        "samedi 21:00": "dispo",
+        "samedi 21:30": "dispo",
+        "samedi 22:00": "dispo"
+    },
+    "updated_at": {
+        "at": 1761688646
+    }
+}

@@ -1,0 +1,5355 @@
+===== export_full_dump.sh =====
+#!/usr/bin/env bash
+# Export project structure and source code into timestamped text files.
+# Usage:
+#   1) Place this script at the ROOT of your project.
+#   2) Run:   bash export_full_dump.sh
+#   3) Results will be in ./exports/export_YYYY-MM-DD_HH-MM-SS/
+#
+# Works on macOS and Linux. Requires only POSIX tools.
+# Optional: 'tree' and 'gzip' if available (falls back gracefully).
+
+set -euo pipefail
+
+# ------------ Config (edit if needed) ------------
+# Directories to exclude (add/remove as you like)
+EXCLUDES=(
+  ".git"
+  "node_modules"
+  "dist"
+  "build"
+  ".next"
+  ".cache"
+  "coverage"
+  ".turbo"
+  ".parcel-cache"
+  ".vite"
+  ".idea"
+  ".vscode"
+  ".DS_Store"
+)
+
+# File extensions to include in the code dump (case-insensitive)
+EXTENSIONS=(
+  "js" "jsx" "ts" "tsx" "php" "json" "css" "html" "md"
+  "env" "env.example" "sh" "bash" "yml" "yaml" "sql"
+  "ini" "conf" "toml" "xml" "csv"
+)
+
+# Max number of header lines per file in preview
+PREVIEW_LINES=40
+# -------------------------------------------------
+
+timestamp() { date "+%Y-%m-%d_%H-%M-%S"; }
+
+ROOT="$(pwd)"
+OUTBASE="${ROOT}/exports"
+OUTDIR="${OUTBASE}/export_$(timestamp)"
+mkdir -p "${OUTDIR}"
+
+# Build a combined regex for extensions (escaped dots)
+# Example: \.(js|jsx|ts|tsx)$ (case-insensitive via grep -Ei)
+EXT_REGEX='\.('
+for i in "${!EXTENSIONS[@]}"; do
+  ext="${EXTENSIONS[$i]}"
+  # escape dots in extensions like "env.example"
+  ext_escaped="$(printf '%s' "$ext" | sed 's/\./\\./g')"
+  if [[ $i -gt 0 ]]; then EXT_REGEX+="|"; fi
+  EXT_REGEX+="${ext_escaped}"
+done
+EXT_REGEX+=')$'
+
+# Build prune expression for find
+# -path "./dir" -prune -o ... so that excluded dirs are skipped entirely
+PRUNE_EXPR=()
+for d in "${EXCLUDES[@]}"; do
+  PRUNE_EXPR+=( -path "./${d}" -prune -o )
+done
+
+# ---------- 1) Structure (tree or find fallback) ----------
+STRUCT_OUT="${OUTDIR}/structure.txt"
+if command -v tree >/dev/null 2>&1; then
+  # Build tree ignore pattern (dir1|dir2|...)
+  IGNORE_PATTERN="$(IFS='|'; echo "${EXCLUDES[*]}")"
+  echo "[i] Generating structure with 'tree' ..."
+  tree -a -I "${IGNORE_PATTERN}" > "${STRUCT_OUT}" || true
+else
+  echo "[i] 'tree' not found, using 'find' fallback for structure ..."
+  # 'find' structure (directories first, then files), skipping excludes
+  # Print relative paths without leading './'
+  find . "${PRUNE_EXPR[@]}" -print | sed 's|^\./||' | sort > "${STRUCT_OUT}"
+fi
+
+# ---------- 2) File list of source files ----------
+FILELIST="${OUTDIR}/filelist.txt"
+echo "[i] Building filtered file list ..."
+# shellcheck disable=SC2016
+find . "${PRUNE_EXPR[@]}" -type f -print \
+  | sed 's|^\./||' \
+  | grep -Ei "${EXT_REGEX}" \
+  | sort > "${FILELIST}" || true
+
+# ---------- 3) Full code dump ----------
+CODE_DUMP="${OUTDIR}/fullcode_dump.txt"
+echo "[i] Creating full code dump at ${CODE_DUMP} ..."
+
+# Ensure empty file
+: > "${CODE_DUMP}"
+while IFS= read -r f; do
+  {
+    echo "===== ${f} ====="
+    # Use cat with safety for binary-ish files (in case) by limiting to text detection
+    # We assume configured extensions are text; if not, still cat but it's user-controlled.
+    cat -- "$f" 2>/dev/null || echo "[warn] Unable to read $f"
+    echo ""
+  } >> "${CODE_DUMP}"
+done < "${FILELIST}"
+
+# ---------- 4) Preview dump (first N lines per file) ----------
+PREVIEW="${OUTDIR}/code_preview.txt"
+echo "[i] Creating preview (${PREVIEW_LINES} lines per file) at ${PREVIEW} ..."
+: > "${PREVIEW}"
+while IFS= read -r f; do
+  {
+    echo "===== ${f} ====="
+    head -n "${PREVIEW_LINES}" -- "$f" 2>/dev/null || echo "[warn] Unable to read $f"
+    echo ""
+  } >> "${PREVIEW}"
+done < "${FILELIST}"
+
+# ---------- 5) Compressed versions (if gzip available) ----------
+if command -v gzip >/dev/null 2>&1; then
+  echo "[i] Creating compressed archives ..."
+  gzip -c "${CODE_DUMP}" > "${CODE_DUMP}.gz" || true
+  gzip -c "${PREVIEW}" > "${PREVIEW}.gz" || true
+fi
+
+# ---------- 6) Summary ----------
+count_files=$(wc -l < "${FILELIST}" | tr -d ' ')
+size_dump=$(wc -c < "${CODE_DUMP}" | tr -d ' ')
+size_preview=$(wc -c < "${PREVIEW}" | tr -d ' ')
+human() {
+  # simple human-size formatter
+  awk 'function human(x){ s="B KMGTPEZY"; while (x>=1024 && length(s)>1){x/=1024; s=substr(s,3)} return sprintf("%.1f %s", x, substr(s,1,1)) } {print human($1)}'
+}
+echo
+echo "======== Export Summary ========"
+echo "Output folder : ${OUTDIR}"
+echo "Structure     : $(basename "${STRUCT_OUT}")"
+echo "Files matched : ${count_files}"
+echo "Dump size     : $(printf "%s\n" "${size_dump}" | human)  ($(basename "${CODE_DUMP}"))"
+echo "Preview size  : $(printf "%s\n" "${size_preview}" | human)  ($(basename "${PREVIEW}"))"
+if [[ -f "${CODE_DUMP}.gz" ]]; then
+  echo "Compressed    : $(basename "${CODE_DUMP}.gz"), $(basename "${PREVIEW}.gz")"
+fi
+echo "================================"
+echo "[OK] Done."
+
+===== index.html =====
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>La Hache Contest — Planificateur</title>
+    <link rel="icon" href="/la-hache-contest/favicon.ico" />
+  </head>
+  <body class="bg-neutral-50">
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>
+===== package-lock.json =====
+{
+  "name": "la-hache-contest",
+  "version": "0.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "la-hache-contest",
+      "version": "0.0.0",
+      "dependencies": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-router-dom": "^6.30.1"
+      },
+      "devDependencies": {
+        "@types/react": "^18.3.26",
+        "@types/react-dom": "^18.3.7",
+        "autoprefixer": "^10.4.20",
+        "postcss": "^8.4.41",
+        "tailwindcss": "^3.4.13",
+        "typescript": "^5.6.2",
+        "vite": "^5.4.8"
+      }
+    },
+    "node_modules/@alloc/quick-lru": {
+      "version": "5.2.0",
+      "resolved": "https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz",
+      "integrity": "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=10"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/@esbuild/aix-ppc64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz",
+      "integrity": "sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==",
+      "cpu": [
+        "ppc64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "aix"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/android-arm": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.21.5.tgz",
+      "integrity": "sha512-vCPvzSjpPHEi1siZdlvAlsPxXl7WbOVUBBAowWug4rJHb68Ox8KualB+1ocNvT5fjv6wpkX6o/iEpbDrf68zcg==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/android-arm64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.21.5.tgz",
+      "integrity": "sha512-c0uX9VAUBQ7dTDCjq+wdyGLowMdtR/GoC2U5IYk/7D1H1JYC0qseD7+11iMP2mRLN9RcCMRcjC4YMclCzGwS/A==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/android-x64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.21.5.tgz",
+      "integrity": "sha512-D7aPRUUNHRBwHxzxRvp856rjUHRFW1SdQATKXH2hqA0kAZb1hKmi02OpYRacl0TxIGz/ZmXWlbZgjwWYaCakTA==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/darwin-arm64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.21.5.tgz",
+      "integrity": "sha512-DwqXqZyuk5AiWWf3UfLiRDJ5EDd49zg6O9wclZ7kUMv2WRFr4HKjXp/5t8JZ11QbQfUS6/cRCKGwYhtNAY88kQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/darwin-x64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.21.5.tgz",
+      "integrity": "sha512-se/JjF8NlmKVG4kNIuyWMV/22ZaerB+qaSi5MdrXtd6R08kvs2qCN4C09miupktDitvh8jRFflwGFBQcxZRjbw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/freebsd-arm64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.21.5.tgz",
+      "integrity": "sha512-5JcRxxRDUJLX8JXp/wcBCy3pENnCgBR9bN6JsY4OmhfUtIHe3ZW0mawA7+RDAcMLrMIZaf03NlQiX9DGyB8h4g==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/freebsd-x64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.21.5.tgz",
+      "integrity": "sha512-J95kNBj1zkbMXtHVH29bBriQygMXqoVQOQYA+ISs0/2l3T9/kj42ow2mpqerRBxDJnmkUDCaQT/dfNXWX/ZZCQ==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/linux-arm": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.21.5.tgz",
+      "integrity": "sha512-bPb5AHZtbeNGjCKVZ9UGqGwo8EUu4cLq68E95A53KlxAPRmUyYv2D6F0uUI65XisGOL1hBP5mTronbgo+0bFcA==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/linux-arm64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.21.5.tgz",
+      "integrity": "sha512-ibKvmyYzKsBeX8d8I7MH/TMfWDXBF3db4qM6sy+7re0YXya+K1cem3on9XgdT2EQGMu4hQyZhan7TeQ8XkGp4Q==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/linux-ia32": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.21.5.tgz",
+      "integrity": "sha512-YvjXDqLRqPDl2dvRODYmmhz4rPeVKYvppfGYKSNGdyZkA01046pLWyRKKI3ax8fbJoK5QbxblURkwK/MWY18Tg==",
+      "cpu": [
+        "ia32"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/linux-loong64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.21.5.tgz",
+      "integrity": "sha512-uHf1BmMG8qEvzdrzAqg2SIG/02+4/DHB6a9Kbya0XDvwDEKCoC8ZRWI5JJvNdUjtciBGFQ5PuBlpEOXQj+JQSg==",
+      "cpu": [
+        "loong64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/linux-mips64el": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.21.5.tgz",
+      "integrity": "sha512-IajOmO+KJK23bj52dFSNCMsz1QP1DqM6cwLUv3W1QwyxkyIWecfafnI555fvSGqEKwjMXVLokcV5ygHW5b3Jbg==",
+      "cpu": [
+        "mips64el"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/linux-ppc64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.21.5.tgz",
+      "integrity": "sha512-1hHV/Z4OEfMwpLO8rp7CvlhBDnjsC3CttJXIhBi+5Aj5r+MBvy4egg7wCbe//hSsT+RvDAG7s81tAvpL2XAE4w==",
+      "cpu": [
+        "ppc64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/linux-riscv64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.21.5.tgz",
+      "integrity": "sha512-2HdXDMd9GMgTGrPWnJzP2ALSokE/0O5HhTUvWIbD3YdjME8JwvSCnNGBnTThKGEB91OZhzrJ4qIIxk/SBmyDDA==",
+      "cpu": [
+        "riscv64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/linux-s390x": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.21.5.tgz",
+      "integrity": "sha512-zus5sxzqBJD3eXxwvjN1yQkRepANgxE9lgOW2qLnmr8ikMTphkjgXu1HR01K4FJg8h1kEEDAqDcZQtbrRnB41A==",
+      "cpu": [
+        "s390x"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/linux-x64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.21.5.tgz",
+      "integrity": "sha512-1rYdTpyv03iycF1+BhzrzQJCdOuAOtaqHTWJZCWvijKD2N5Xu0TtVC8/+1faWqcP9iBCWOmjmhoH94dH82BxPQ==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/netbsd-x64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.21.5.tgz",
+      "integrity": "sha512-Woi2MXzXjMULccIwMnLciyZH4nCIMpWQAs049KEeMvOcNADVxo0UBIQPfSmxB3CWKedngg7sWZdLvLczpe0tLg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "netbsd"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/openbsd-x64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.21.5.tgz",
+      "integrity": "sha512-HLNNw99xsvx12lFBUwoT8EVCsSvRNDVxNpjZ7bPn947b8gJPzeHWyNVhFsaerc0n3TsbOINvRP2byTZ5LKezow==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "openbsd"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/sunos-x64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.21.5.tgz",
+      "integrity": "sha512-6+gjmFpfy0BHU5Tpptkuh8+uw3mnrvgs+dSPQXQOv3ekbordwnzTVEb4qnIvQcYXq6gzkyTnoZ9dZG+D4garKg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "sunos"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/win32-arm64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.21.5.tgz",
+      "integrity": "sha512-Z0gOTd75VvXqyq7nsl93zwahcTROgqvuAcYDUr+vOv8uHhNSKROyU961kgtCD1e95IqPKSQKH7tBTslnS3tA8A==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/win32-ia32": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.21.5.tgz",
+      "integrity": "sha512-SWXFF1CL2RVNMaVs+BBClwtfZSvDgtL//G/smwAc5oVK/UPu2Gu9tIaRgFmYFFKrmg3SyAjSrElf0TiJ1v8fYA==",
+      "cpu": [
+        "ia32"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@esbuild/win32-x64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.21.5.tgz",
+      "integrity": "sha512-tQd/1efJuzPC6rCFwEvLtci/xNFcTZknmXs98FYDfGE4wP9ClFV98nyKrzJKVPMhdDnjzLhdUyMX4PsQAPjwIw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@isaacs/cliui": {
+      "version": "8.0.2",
+      "resolved": "https://registry.npmjs.org/@isaacs/cliui/-/cliui-8.0.2.tgz",
+      "integrity": "sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "string-width": "^5.1.2",
+        "string-width-cjs": "npm:string-width@^4.2.0",
+        "strip-ansi": "^7.0.1",
+        "strip-ansi-cjs": "npm:strip-ansi@^6.0.1",
+        "wrap-ansi": "^8.1.0",
+        "wrap-ansi-cjs": "npm:wrap-ansi@^7.0.0"
+      },
+      "engines": {
+        "node": ">=12"
+      }
+    },
+    "node_modules/@jridgewell/gen-mapping": {
+      "version": "0.3.13",
+      "resolved": "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz",
+      "integrity": "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@jridgewell/sourcemap-codec": "^1.5.0",
+        "@jridgewell/trace-mapping": "^0.3.24"
+      }
+    },
+    "node_modules/@jridgewell/resolve-uri": {
+      "version": "3.1.2",
+      "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz",
+      "integrity": "sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=6.0.0"
+      }
+    },
+    "node_modules/@jridgewell/sourcemap-codec": {
+      "version": "1.5.5",
+      "resolved": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz",
+      "integrity": "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/@jridgewell/trace-mapping": {
+      "version": "0.3.31",
+      "resolved": "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz",
+      "integrity": "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@jridgewell/resolve-uri": "^3.1.0",
+        "@jridgewell/sourcemap-codec": "^1.4.14"
+      }
+    },
+    "node_modules/@nodelib/fs.scandir": {
+      "version": "2.1.5",
+      "resolved": "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz",
+      "integrity": "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@nodelib/fs.stat": "2.0.5",
+        "run-parallel": "^1.1.9"
+      },
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/@nodelib/fs.stat": {
+      "version": "2.0.5",
+      "resolved": "https://registry.npmjs.org/@nodelib/fs.stat/-/fs.stat-2.0.5.tgz",
+      "integrity": "sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/@nodelib/fs.walk": {
+      "version": "1.2.8",
+      "resolved": "https://registry.npmjs.org/@nodelib/fs.walk/-/fs.walk-1.2.8.tgz",
+      "integrity": "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@nodelib/fs.scandir": "2.1.5",
+        "fastq": "^1.6.0"
+      },
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/@pkgjs/parseargs": {
+      "version": "0.11.0",
+      "resolved": "https://registry.npmjs.org/@pkgjs/parseargs/-/parseargs-0.11.0.tgz",
+      "integrity": "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==",
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "engines": {
+        "node": ">=14"
+      }
+    },
+    "node_modules/@remix-run/router": {
+      "version": "1.23.0",
+      "resolved": "https://registry.npmjs.org/@remix-run/router/-/router-1.23.0.tgz",
+      "integrity": "sha512-O3rHJzAQKamUz1fvE0Qaw0xSFqsA/yafi2iqeE0pvdFtCO1viYx8QL6f3Ln/aCCTLxs68SLf0KPM9eSeM8yBnA==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=14.0.0"
+      }
+    },
+    "node_modules/@rollup/rollup-android-arm-eabi": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.52.4.tgz",
+      "integrity": "sha512-BTm2qKNnWIQ5auf4deoetINJm2JzvihvGb9R6K/ETwKLql/Bb3Eg2H1FBp1gUb4YGbydMA3jcmQTR73q7J+GAA==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ]
+    },
+    "node_modules/@rollup/rollup-android-arm64": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.52.4.tgz",
+      "integrity": "sha512-P9LDQiC5vpgGFgz7GSM6dKPCiqR3XYN1WwJKA4/BUVDjHpYsf3iBEmVz62uyq20NGYbiGPR5cNHI7T1HqxNs2w==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ]
+    },
+    "node_modules/@rollup/rollup-darwin-arm64": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.52.4.tgz",
+      "integrity": "sha512-QRWSW+bVccAvZF6cbNZBJwAehmvG9NwfWHwMy4GbWi/BQIA/laTIktebT2ipVjNncqE6GLPxOok5hsECgAxGZg==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ]
+    },
+    "node_modules/@rollup/rollup-darwin-x64": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.52.4.tgz",
+      "integrity": "sha512-hZgP05pResAkRJxL1b+7yxCnXPGsXU0fG9Yfd6dUaoGk+FhdPKCJ5L1Sumyxn8kvw8Qi5PvQ8ulenUbRjzeCTw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ]
+    },
+    "node_modules/@rollup/rollup-freebsd-arm64": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.52.4.tgz",
+      "integrity": "sha512-xmc30VshuBNUd58Xk4TKAEcRZHaXlV+tCxIXELiE9sQuK3kG8ZFgSPi57UBJt8/ogfhAF5Oz4ZSUBN77weM+mQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ]
+    },
+    "node_modules/@rollup/rollup-freebsd-x64": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-freebsd-x64/-/rollup-freebsd-x64-4.52.4.tgz",
+      "integrity": "sha512-WdSLpZFjOEqNZGmHflxyifolwAiZmDQzuOzIq9L27ButpCVpD7KzTRtEG1I0wMPFyiyUdOO+4t8GvrnBLQSwpw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-arm-gnueabihf": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm-gnueabihf/-/rollup-linux-arm-gnueabihf-4.52.4.tgz",
+      "integrity": "sha512-xRiOu9Of1FZ4SxVbB0iEDXc4ddIcjCv2aj03dmW8UrZIW7aIQ9jVJdLBIhxBI+MaTnGAKyvMwPwQnoOEvP7FgQ==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-arm-musleabihf": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm-musleabihf/-/rollup-linux-arm-musleabihf-4.52.4.tgz",
+      "integrity": "sha512-FbhM2p9TJAmEIEhIgzR4soUcsW49e9veAQCziwbR+XWB2zqJ12b4i/+hel9yLiD8pLncDH4fKIPIbt5238341Q==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-arm64-gnu": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm64-gnu/-/rollup-linux-arm64-gnu-4.52.4.tgz",
+      "integrity": "sha512-4n4gVwhPHR9q/g8lKCyz0yuaD0MvDf7dV4f9tHt0C73Mp8h38UCtSCSE6R9iBlTbXlmA8CjpsZoujhszefqueg==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-arm64-musl": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm64-musl/-/rollup-linux-arm64-musl-4.52.4.tgz",
+      "integrity": "sha512-u0n17nGA0nvi/11gcZKsjkLj1QIpAuPFQbR48Subo7SmZJnGxDpspyw2kbpuoQnyK+9pwf3pAoEXerJs/8Mi9g==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-loong64-gnu": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-loong64-gnu/-/rollup-linux-loong64-gnu-4.52.4.tgz",
+      "integrity": "sha512-0G2c2lpYtbTuXo8KEJkDkClE/+/2AFPdPAbmaHoE870foRFs4pBrDehilMcrSScrN/fB/1HTaWO4bqw+ewBzMQ==",
+      "cpu": [
+        "loong64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-ppc64-gnu": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-ppc64-gnu/-/rollup-linux-ppc64-gnu-4.52.4.tgz",
+      "integrity": "sha512-teSACug1GyZHmPDv14VNbvZFX779UqWTsd7KtTM9JIZRDI5NUwYSIS30kzI8m06gOPB//jtpqlhmraQ68b5X2g==",
+      "cpu": [
+        "ppc64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-riscv64-gnu": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-riscv64-gnu/-/rollup-linux-riscv64-gnu-4.52.4.tgz",
+      "integrity": "sha512-/MOEW3aHjjs1p4Pw1Xk4+3egRevx8Ji9N6HUIA1Ifh8Q+cg9dremvFCUbOX2Zebz80BwJIgCBUemjqhU5XI5Eg==",
+      "cpu": [
+        "riscv64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-riscv64-musl": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-riscv64-musl/-/rollup-linux-riscv64-musl-4.52.4.tgz",
+      "integrity": "sha512-1HHmsRyh845QDpEWzOFtMCph5Ts+9+yllCrREuBR/vg2RogAQGGBRC8lDPrPOMnrdOJ+mt1WLMOC2Kao/UwcvA==",
+      "cpu": [
+        "riscv64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-s390x-gnu": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-s390x-gnu/-/rollup-linux-s390x-gnu-4.52.4.tgz",
+      "integrity": "sha512-seoeZp4L/6D1MUyjWkOMRU6/iLmCU2EjbMTyAG4oIOs1/I82Y5lTeaxW0KBfkUdHAWN7j25bpkt0rjnOgAcQcA==",
+      "cpu": [
+        "s390x"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-x64-gnu": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.52.4.tgz",
+      "integrity": "sha512-Wi6AXf0k0L7E2gteNsNHUs7UMwCIhsCTs6+tqQ5GPwVRWMaflqGec4Sd8n6+FNFDw9vGcReqk2KzBDhCa1DLYg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-x64-musl": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.52.4.tgz",
+      "integrity": "sha512-dtBZYjDmCQ9hW+WgEkaffvRRCKm767wWhxsFW3Lw86VXz/uJRuD438/XvbZT//B96Vs8oTA8Q4A0AfHbrxP9zw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-openharmony-arm64": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-openharmony-arm64/-/rollup-openharmony-arm64-4.52.4.tgz",
+      "integrity": "sha512-1ox+GqgRWqaB1RnyZXL8PD6E5f7YyRUJYnCqKpNzxzP0TkaUh112NDrR9Tt+C8rJ4x5G9Mk8PQR3o7Ku2RKqKA==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "openharmony"
+      ]
+    },
+    "node_modules/@rollup/rollup-win32-arm64-msvc": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-arm64-msvc/-/rollup-win32-arm64-msvc-4.52.4.tgz",
+      "integrity": "sha512-8GKr640PdFNXwzIE0IrkMWUNUomILLkfeHjXBi/nUvFlpZP+FA8BKGKpacjW6OUUHaNI6sUURxR2U2g78FOHWQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ]
+    },
+    "node_modules/@rollup/rollup-win32-ia32-msvc": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-ia32-msvc/-/rollup-win32-ia32-msvc-4.52.4.tgz",
+      "integrity": "sha512-AIy/jdJ7WtJ/F6EcfOb2GjR9UweO0n43jNObQMb6oGxkYTfLcnN7vYYpG+CN3lLxrQkzWnMOoNSHTW54pgbVxw==",
+      "cpu": [
+        "ia32"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ]
+    },
+    "node_modules/@rollup/rollup-win32-x64-gnu": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-x64-gnu/-/rollup-win32-x64-gnu-4.52.4.tgz",
+      "integrity": "sha512-UF9KfsH9yEam0UjTwAgdK0anlQ7c8/pWPU2yVjyWcF1I1thABt6WXE47cI71pGiZ8wGvxohBoLnxM04L/wj8mQ==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ]
+    },
+    "node_modules/@rollup/rollup-win32-x64-msvc": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.52.4.tgz",
+      "integrity": "sha512-bf9PtUa0u8IXDVxzRToFQKsNCRz9qLYfR/MpECxl4mRoWYjAeFjgxj1XdZr2M/GNVpT05p+LgQOHopYDlUu6/w==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ]
+    },
+    "node_modules/@types/estree": {
+      "version": "1.0.8",
+      "resolved": "https://registry.npmjs.org/@types/estree/-/estree-1.0.8.tgz",
+      "integrity": "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/@types/prop-types": {
+      "version": "15.7.15",
+      "resolved": "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.15.tgz",
+      "integrity": "sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/@types/react": {
+      "version": "18.3.26",
+      "resolved": "https://registry.npmjs.org/@types/react/-/react-18.3.26.tgz",
+      "integrity": "sha512-RFA/bURkcKzx/X9oumPG9Vp3D3JUgus/d0b67KB0t5S/raciymilkOa66olh78MUI92QLbEJevO7rvqU/kjwKA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@types/prop-types": "*",
+        "csstype": "^3.0.2"
+      }
+    },
+    "node_modules/@types/react-dom": {
+      "version": "18.3.7",
+      "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.3.7.tgz",
+      "integrity": "sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==",
+      "dev": true,
+      "license": "MIT",
+      "peerDependencies": {
+        "@types/react": "^18.0.0"
+      }
+    },
+    "node_modules/ansi-regex": {
+      "version": "6.2.2",
+      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-6.2.2.tgz",
+      "integrity": "sha512-Bq3SmSpyFHaWjPk8If9yc6svM8c56dB5BAtW4Qbw5jHTwwXXcTLoRMkpDJp6VL0XzlWaCHTXrkFURMYmD0sLqg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "url": "https://github.com/chalk/ansi-regex?sponsor=1"
+      }
+    },
+    "node_modules/ansi-styles": {
+      "version": "6.2.3",
+      "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-6.2.3.tgz",
+      "integrity": "sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "url": "https://github.com/chalk/ansi-styles?sponsor=1"
+      }
+    },
+    "node_modules/any-promise": {
+      "version": "1.3.0",
+      "resolved": "https://registry.npmjs.org/any-promise/-/any-promise-1.3.0.tgz",
+      "integrity": "sha512-7UvmKalWRt1wgjL1RrGxoSJW/0QZFIegpeGvZG9kjp8vrRu55XTHbwnqq2GpXm9uLbcuhxm3IqX9OB4MZR1b2A==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/anymatch": {
+      "version": "3.1.3",
+      "resolved": "https://registry.npmjs.org/anymatch/-/anymatch-3.1.3.tgz",
+      "integrity": "sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "normalize-path": "^3.0.0",
+        "picomatch": "^2.0.4"
+      },
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/arg": {
+      "version": "5.0.2",
+      "resolved": "https://registry.npmjs.org/arg/-/arg-5.0.2.tgz",
+      "integrity": "sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/autoprefixer": {
+      "version": "10.4.21",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-10.4.21.tgz",
+      "integrity": "sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/postcss/"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/autoprefixer"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "browserslist": "^4.24.4",
+        "caniuse-lite": "^1.0.30001702",
+        "fraction.js": "^4.3.7",
+        "normalize-range": "^0.1.2",
+        "picocolors": "^1.1.1",
+        "postcss-value-parser": "^4.2.0"
+      },
+      "bin": {
+        "autoprefixer": "bin/autoprefixer"
+      },
+      "engines": {
+        "node": "^10 || ^12 || >=14"
+      },
+      "peerDependencies": {
+        "postcss": "^8.1.0"
+      }
+    },
+    "node_modules/balanced-match": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz",
+      "integrity": "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/baseline-browser-mapping": {
+      "version": "2.8.17",
+      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.8.17.tgz",
+      "integrity": "sha512-j5zJcx6golJYTG6c05LUZ3Z8Gi+M62zRT/ycz4Xq4iCOdpcxwg7ngEYD4KA0eWZC7U17qh/Smq8bYbACJ0ipBA==",
+      "dev": true,
+      "license": "Apache-2.0",
+      "bin": {
+        "baseline-browser-mapping": "dist/cli.js"
+      }
+    },
+    "node_modules/binary-extensions": {
+      "version": "2.3.0",
+      "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.3.0.tgz",
+      "integrity": "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/brace-expansion": {
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.2.tgz",
+      "integrity": "sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "balanced-match": "^1.0.0"
+      }
+    },
+    "node_modules/braces": {
+      "version": "3.0.3",
+      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz",
+      "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "fill-range": "^7.1.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/browserslist": {
+      "version": "4.26.3",
+      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.26.3.tgz",
+      "integrity": "sha512-lAUU+02RFBuCKQPj/P6NgjlbCnLBMp4UtgTx7vNHd3XSIJF87s9a5rA3aH2yw3GS9DqZAUbOtZdCCiZeVRqt0w==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/browserslist"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/browserslist"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "baseline-browser-mapping": "^2.8.9",
+        "caniuse-lite": "^1.0.30001746",
+        "electron-to-chromium": "^1.5.227",
+        "node-releases": "^2.0.21",
+        "update-browserslist-db": "^1.1.3"
+      },
+      "bin": {
+        "browserslist": "cli.js"
+      },
+      "engines": {
+        "node": "^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7"
+      }
+    },
+    "node_modules/camelcase-css": {
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/camelcase-css/-/camelcase-css-2.0.1.tgz",
+      "integrity": "sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 6"
+      }
+    },
+    "node_modules/caniuse-lite": {
+      "version": "1.0.30001751",
+      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001751.tgz",
+      "integrity": "sha512-A0QJhug0Ly64Ii3eIqHu5X51ebln3k4yTUkY1j8drqpWHVreg/VLijN48cZ1bYPiqOQuqpkIKnzr/Ul8V+p6Cw==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/browserslist"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/caniuse-lite"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "CC-BY-4.0"
+    },
+    "node_modules/chokidar": {
+      "version": "3.6.0",
+      "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-3.6.0.tgz",
+      "integrity": "sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "anymatch": "~3.1.2",
+        "braces": "~3.0.2",
+        "glob-parent": "~5.1.2",
+        "is-binary-path": "~2.1.0",
+        "is-glob": "~4.0.1",
+        "normalize-path": "~3.0.0",
+        "readdirp": "~3.6.0"
+      },
+      "engines": {
+        "node": ">= 8.10.0"
+      },
+      "funding": {
+        "url": "https://paulmillr.com/funding/"
+      },
+      "optionalDependencies": {
+        "fsevents": "~2.3.2"
+      }
+    },
+    "node_modules/chokidar/node_modules/glob-parent": {
+      "version": "5.1.2",
+      "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz",
+      "integrity": "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "is-glob": "^4.0.1"
+      },
+      "engines": {
+        "node": ">= 6"
+      }
+    },
+    "node_modules/color-convert": {
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz",
+      "integrity": "sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "color-name": "~1.1.4"
+      },
+      "engines": {
+        "node": ">=7.0.0"
+      }
+    },
+    "node_modules/color-name": {
+      "version": "1.1.4",
+      "resolved": "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz",
+      "integrity": "sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/commander": {
+      "version": "4.1.1",
+      "resolved": "https://registry.npmjs.org/commander/-/commander-4.1.1.tgz",
+      "integrity": "sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 6"
+      }
+    },
+    "node_modules/cross-spawn": {
+      "version": "7.0.6",
+      "resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz",
+      "integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "path-key": "^3.1.0",
+        "shebang-command": "^2.0.0",
+        "which": "^2.0.1"
+      },
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/cssesc": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/cssesc/-/cssesc-3.0.0.tgz",
+      "integrity": "sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==",
+      "dev": true,
+      "license": "MIT",
+      "bin": {
+        "cssesc": "bin/cssesc"
+      },
+      "engines": {
+        "node": ">=4"
+      }
+    },
+    "node_modules/csstype": {
+      "version": "3.1.3",
+      "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz",
+      "integrity": "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/didyoumean": {
+      "version": "1.2.2",
+      "resolved": "https://registry.npmjs.org/didyoumean/-/didyoumean-1.2.2.tgz",
+      "integrity": "sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==",
+      "dev": true,
+      "license": "Apache-2.0"
+    },
+    "node_modules/dlv": {
+      "version": "1.1.3",
+      "resolved": "https://registry.npmjs.org/dlv/-/dlv-1.1.3.tgz",
+      "integrity": "sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/eastasianwidth": {
+      "version": "0.2.0",
+      "resolved": "https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz",
+      "integrity": "sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/electron-to-chromium": {
+      "version": "1.5.237",
+      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.237.tgz",
+      "integrity": "sha512-icUt1NvfhGLar5lSWH3tHNzablaA5js3HVHacQimfP8ViEBOQv+L7DKEuHdbTZ0SKCO1ogTJTIL1Gwk9S6Qvcg==",
+      "dev": true,
+      "license": "ISC"
+    },
+    "node_modules/emoji-regex": {
+      "version": "9.2.2",
+      "resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-9.2.2.tgz",
+      "integrity": "sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/esbuild": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.21.5.tgz",
+      "integrity": "sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==",
+      "dev": true,
+      "hasInstallScript": true,
+      "license": "MIT",
+      "bin": {
+        "esbuild": "bin/esbuild"
+      },
+      "engines": {
+        "node": ">=12"
+      },
+      "optionalDependencies": {
+        "@esbuild/aix-ppc64": "0.21.5",
+        "@esbuild/android-arm": "0.21.5",
+        "@esbuild/android-arm64": "0.21.5",
+        "@esbuild/android-x64": "0.21.5",
+        "@esbuild/darwin-arm64": "0.21.5",
+        "@esbuild/darwin-x64": "0.21.5",
+        "@esbuild/freebsd-arm64": "0.21.5",
+        "@esbuild/freebsd-x64": "0.21.5",
+        "@esbuild/linux-arm": "0.21.5",
+        "@esbuild/linux-arm64": "0.21.5",
+        "@esbuild/linux-ia32": "0.21.5",
+        "@esbuild/linux-loong64": "0.21.5",
+        "@esbuild/linux-mips64el": "0.21.5",
+        "@esbuild/linux-ppc64": "0.21.5",
+        "@esbuild/linux-riscv64": "0.21.5",
+        "@esbuild/linux-s390x": "0.21.5",
+        "@esbuild/linux-x64": "0.21.5",
+        "@esbuild/netbsd-x64": "0.21.5",
+        "@esbuild/openbsd-x64": "0.21.5",
+        "@esbuild/sunos-x64": "0.21.5",
+        "@esbuild/win32-arm64": "0.21.5",
+        "@esbuild/win32-ia32": "0.21.5",
+        "@esbuild/win32-x64": "0.21.5"
+      }
+    },
+    "node_modules/escalade": {
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/escalade/-/escalade-3.2.0.tgz",
+      "integrity": "sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=6"
+      }
+    },
+    "node_modules/fast-glob": {
+      "version": "3.3.3",
+      "resolved": "https://registry.npmjs.org/fast-glob/-/fast-glob-3.3.3.tgz",
+      "integrity": "sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@nodelib/fs.stat": "^2.0.2",
+        "@nodelib/fs.walk": "^1.2.3",
+        "glob-parent": "^5.1.2",
+        "merge2": "^1.3.0",
+        "micromatch": "^4.0.8"
+      },
+      "engines": {
+        "node": ">=8.6.0"
+      }
+    },
+    "node_modules/fast-glob/node_modules/glob-parent": {
+      "version": "5.1.2",
+      "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz",
+      "integrity": "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "is-glob": "^4.0.1"
+      },
+      "engines": {
+        "node": ">= 6"
+      }
+    },
+    "node_modules/fastq": {
+      "version": "1.19.1",
+      "resolved": "https://registry.npmjs.org/fastq/-/fastq-1.19.1.tgz",
+      "integrity": "sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "reusify": "^1.0.4"
+      }
+    },
+    "node_modules/fill-range": {
+      "version": "7.1.1",
+      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.1.1.tgz",
+      "integrity": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "to-regex-range": "^5.0.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/foreground-child": {
+      "version": "3.3.1",
+      "resolved": "https://registry.npmjs.org/foreground-child/-/foreground-child-3.3.1.tgz",
+      "integrity": "sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "cross-spawn": "^7.0.6",
+        "signal-exit": "^4.0.1"
+      },
+      "engines": {
+        "node": ">=14"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/isaacs"
+      }
+    },
+    "node_modules/fraction.js": {
+      "version": "4.3.7",
+      "resolved": "https://registry.npmjs.org/fraction.js/-/fraction.js-4.3.7.tgz",
+      "integrity": "sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": "*"
+      },
+      "funding": {
+        "type": "patreon",
+        "url": "https://github.com/sponsors/rawify"
+      }
+    },
+    "node_modules/fsevents": {
+      "version": "2.3.3",
+      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+      "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
+      "dev": true,
+      "hasInstallScript": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": "^8.16.0 || ^10.6.0 || >=11.0.0"
+      }
+    },
+    "node_modules/function-bind": {
+      "version": "1.1.2",
+      "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
+      "integrity": "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==",
+      "dev": true,
+      "license": "MIT",
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/glob": {
+      "version": "10.4.5",
+      "resolved": "https://registry.npmjs.org/glob/-/glob-10.4.5.tgz",
+      "integrity": "sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "foreground-child": "^3.1.0",
+        "jackspeak": "^3.1.2",
+        "minimatch": "^9.0.4",
+        "minipass": "^7.1.2",
+        "package-json-from-dist": "^1.0.0",
+        "path-scurry": "^1.11.1"
+      },
+      "bin": {
+        "glob": "dist/esm/bin.mjs"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/isaacs"
+      }
+    },
+    "node_modules/glob-parent": {
+      "version": "6.0.2",
+      "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-6.0.2.tgz",
+      "integrity": "sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "is-glob": "^4.0.3"
+      },
+      "engines": {
+        "node": ">=10.13.0"
+      }
+    },
+    "node_modules/hasown": {
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/hasown/-/hasown-2.0.2.tgz",
+      "integrity": "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "function-bind": "^1.1.2"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/is-binary-path": {
+      "version": "2.1.0",
+      "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
+      "integrity": "sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "binary-extensions": "^2.0.0"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/is-core-module": {
+      "version": "2.16.1",
+      "resolved": "https://registry.npmjs.org/is-core-module/-/is-core-module-2.16.1.tgz",
+      "integrity": "sha512-UfoeMA6fIJ8wTYFEUjelnaGI67v6+N7qXJEvQuIGa99l4xsCruSYOVSQ0uPANn4dAzm8lkYPaKLrrijLq7x23w==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "hasown": "^2.0.2"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/is-extglob": {
+      "version": "2.1.1",
+      "resolved": "https://registry.npmjs.org/is-extglob/-/is-extglob-2.1.1.tgz",
+      "integrity": "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/is-fullwidth-code-point": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-3.0.0.tgz",
+      "integrity": "sha512-zymm5+u+sCsSWyD9qNaejV3DFvhCKclKdizYaJUuHA83RLjb7nSuGnddCHGv0hk+KY7BMAlsWeK4Ueg6EV6XQg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/is-glob": {
+      "version": "4.0.3",
+      "resolved": "https://registry.npmjs.org/is-glob/-/is-glob-4.0.3.tgz",
+      "integrity": "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "is-extglob": "^2.1.1"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/is-number": {
+      "version": "7.0.0",
+      "resolved": "https://registry.npmjs.org/is-number/-/is-number-7.0.0.tgz",
+      "integrity": "sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.12.0"
+      }
+    },
+    "node_modules/isexe": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz",
+      "integrity": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==",
+      "dev": true,
+      "license": "ISC"
+    },
+    "node_modules/jackspeak": {
+      "version": "3.4.3",
+      "resolved": "https://registry.npmjs.org/jackspeak/-/jackspeak-3.4.3.tgz",
+      "integrity": "sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==",
+      "dev": true,
+      "license": "BlueOak-1.0.0",
+      "dependencies": {
+        "@isaacs/cliui": "^8.0.2"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/isaacs"
+      },
+      "optionalDependencies": {
+        "@pkgjs/parseargs": "^0.11.0"
+      }
+    },
+    "node_modules/jiti": {
+      "version": "1.21.7",
+      "resolved": "https://registry.npmjs.org/jiti/-/jiti-1.21.7.tgz",
+      "integrity": "sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==",
+      "dev": true,
+      "license": "MIT",
+      "bin": {
+        "jiti": "bin/jiti.js"
+      }
+    },
+    "node_modules/js-tokens": {
+      "version": "4.0.0",
+      "resolved": "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz",
+      "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==",
+      "license": "MIT"
+    },
+    "node_modules/lilconfig": {
+      "version": "3.1.3",
+      "resolved": "https://registry.npmjs.org/lilconfig/-/lilconfig-3.1.3.tgz",
+      "integrity": "sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=14"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/antonk52"
+      }
+    },
+    "node_modules/lines-and-columns": {
+      "version": "1.2.4",
+      "resolved": "https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz",
+      "integrity": "sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/loose-envify": {
+      "version": "1.4.0",
+      "resolved": "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz",
+      "integrity": "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==",
+      "license": "MIT",
+      "dependencies": {
+        "js-tokens": "^3.0.0 || ^4.0.0"
+      },
+      "bin": {
+        "loose-envify": "cli.js"
+      }
+    },
+    "node_modules/lru-cache": {
+      "version": "10.4.3",
+      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-10.4.3.tgz",
+      "integrity": "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==",
+      "dev": true,
+      "license": "ISC"
+    },
+    "node_modules/merge2": {
+      "version": "1.4.1",
+      "resolved": "https://registry.npmjs.org/merge2/-/merge2-1.4.1.tgz",
+      "integrity": "sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/micromatch": {
+      "version": "4.0.8",
+      "resolved": "https://registry.npmjs.org/micromatch/-/micromatch-4.0.8.tgz",
+      "integrity": "sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "braces": "^3.0.3",
+        "picomatch": "^2.3.1"
+      },
+      "engines": {
+        "node": ">=8.6"
+      }
+    },
+    "node_modules/minimatch": {
+      "version": "9.0.5",
+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-9.0.5.tgz",
+      "integrity": "sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "brace-expansion": "^2.0.1"
+      },
+      "engines": {
+        "node": ">=16 || 14 >=14.17"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/isaacs"
+      }
+    },
+    "node_modules/minipass": {
+      "version": "7.1.2",
+      "resolved": "https://registry.npmjs.org/minipass/-/minipass-7.1.2.tgz",
+      "integrity": "sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==",
+      "dev": true,
+      "license": "ISC",
+      "engines": {
+        "node": ">=16 || 14 >=14.17"
+      }
+    },
+    "node_modules/mz": {
+      "version": "2.7.0",
+      "resolved": "https://registry.npmjs.org/mz/-/mz-2.7.0.tgz",
+      "integrity": "sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "any-promise": "^1.0.0",
+        "object-assign": "^4.0.1",
+        "thenify-all": "^1.0.0"
+      }
+    },
+    "node_modules/nanoid": {
+      "version": "3.3.11",
+      "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.11.tgz",
+      "integrity": "sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "bin": {
+        "nanoid": "bin/nanoid.cjs"
+      },
+      "engines": {
+        "node": "^10 || ^12 || ^13.7 || ^14 || >=15.0.1"
+      }
+    },
+    "node_modules/node-releases": {
+      "version": "2.0.25",
+      "resolved": "https://registry.npmjs.org/node-releases/-/node-releases-2.0.25.tgz",
+      "integrity": "sha512-4auku8B/vw5psvTiiN9j1dAOsXvMoGqJuKJcR+dTdqiXEK20mMTk1UEo3HS16LeGQsVG6+qKTPM9u/qQ2LqATA==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/normalize-path": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/normalize-path/-/normalize-path-3.0.0.tgz",
+      "integrity": "sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/normalize-range": {
+      "version": "0.1.2",
+      "resolved": "https://registry.npmjs.org/normalize-range/-/normalize-range-0.1.2.tgz",
+      "integrity": "sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/object-assign": {
+      "version": "4.1.1",
+      "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz",
+      "integrity": "sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/object-hash": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/object-hash/-/object-hash-3.0.0.tgz",
+      "integrity": "sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 6"
+      }
+    },
+    "node_modules/package-json-from-dist": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/package-json-from-dist/-/package-json-from-dist-1.0.1.tgz",
+      "integrity": "sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==",
+      "dev": true,
+      "license": "BlueOak-1.0.0"
+    },
+    "node_modules/path-key": {
+      "version": "3.1.1",
+      "resolved": "https://registry.npmjs.org/path-key/-/path-key-3.1.1.tgz",
+      "integrity": "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/path-parse": {
+      "version": "1.0.7",
+      "resolved": "https://registry.npmjs.org/path-parse/-/path-parse-1.0.7.tgz",
+      "integrity": "sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/path-scurry": {
+      "version": "1.11.1",
+      "resolved": "https://registry.npmjs.org/path-scurry/-/path-scurry-1.11.1.tgz",
+      "integrity": "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==",
+      "dev": true,
+      "license": "BlueOak-1.0.0",
+      "dependencies": {
+        "lru-cache": "^10.2.0",
+        "minipass": "^5.0.0 || ^6.0.2 || ^7.0.0"
+      },
+      "engines": {
+        "node": ">=16 || 14 >=14.18"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/isaacs"
+      }
+    },
+    "node_modules/picocolors": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz",
+      "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==",
+      "dev": true,
+      "license": "ISC"
+    },
+    "node_modules/picomatch": {
+      "version": "2.3.1",
+      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
+      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8.6"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/jonschlinkert"
+      }
+    },
+    "node_modules/pify": {
+      "version": "2.3.0",
+      "resolved": "https://registry.npmjs.org/pify/-/pify-2.3.0.tgz",
+      "integrity": "sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/pirates": {
+      "version": "4.0.7",
+      "resolved": "https://registry.npmjs.org/pirates/-/pirates-4.0.7.tgz",
+      "integrity": "sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 6"
+      }
+    },
+    "node_modules/postcss": {
+      "version": "8.5.6",
+      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.6.tgz",
+      "integrity": "sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/postcss/"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/postcss"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "nanoid": "^3.3.11",
+        "picocolors": "^1.1.1",
+        "source-map-js": "^1.2.1"
+      },
+      "engines": {
+        "node": "^10 || ^12 || >=14"
+      }
+    },
+    "node_modules/postcss-import": {
+      "version": "15.1.0",
+      "resolved": "https://registry.npmjs.org/postcss-import/-/postcss-import-15.1.0.tgz",
+      "integrity": "sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "postcss-value-parser": "^4.0.0",
+        "read-cache": "^1.0.0",
+        "resolve": "^1.1.7"
+      },
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "peerDependencies": {
+        "postcss": "^8.0.0"
+      }
+    },
+    "node_modules/postcss-js": {
+      "version": "4.1.0",
+      "resolved": "https://registry.npmjs.org/postcss-js/-/postcss-js-4.1.0.tgz",
+      "integrity": "sha512-oIAOTqgIo7q2EOwbhb8UalYePMvYoIeRY2YKntdpFQXNosSu3vLrniGgmH9OKs/qAkfoj5oB3le/7mINW1LCfw==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/postcss/"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "camelcase-css": "^2.0.1"
+      },
+      "engines": {
+        "node": "^12 || ^14 || >= 16"
+      },
+      "peerDependencies": {
+        "postcss": "^8.4.21"
+      }
+    },
+    "node_modules/postcss-load-config": {
+      "version": "6.0.1",
+      "resolved": "https://registry.npmjs.org/postcss-load-config/-/postcss-load-config-6.0.1.tgz",
+      "integrity": "sha512-oPtTM4oerL+UXmx+93ytZVN82RrlY/wPUV8IeDxFrzIjXOLF1pN+EmKPLbubvKHT2HC20xXsCAH2Z+CKV6Oz/g==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/postcss/"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "lilconfig": "^3.1.1"
+      },
+      "engines": {
+        "node": ">= 18"
+      },
+      "peerDependencies": {
+        "jiti": ">=1.21.0",
+        "postcss": ">=8.0.9",
+        "tsx": "^4.8.1",
+        "yaml": "^2.4.2"
+      },
+      "peerDependenciesMeta": {
+        "jiti": {
+          "optional": true
+        },
+        "postcss": {
+          "optional": true
+        },
+        "tsx": {
+          "optional": true
+        },
+        "yaml": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/postcss-nested": {
+      "version": "6.2.0",
+      "resolved": "https://registry.npmjs.org/postcss-nested/-/postcss-nested-6.2.0.tgz",
+      "integrity": "sha512-HQbt28KulC5AJzG+cZtj9kvKB93CFCdLvog1WFLf1D+xmMvPGlBstkpTEZfK5+AN9hfJocyBFCNiqyS48bpgzQ==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/postcss/"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "postcss-selector-parser": "^6.1.1"
+      },
+      "engines": {
+        "node": ">=12.0"
+      },
+      "peerDependencies": {
+        "postcss": "^8.2.14"
+      }
+    },
+    "node_modules/postcss-selector-parser": {
+      "version": "6.1.2",
+      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.2.tgz",
+      "integrity": "sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "cssesc": "^3.0.0",
+        "util-deprecate": "^1.0.2"
+      },
+      "engines": {
+        "node": ">=4"
+      }
+    },
+    "node_modules/postcss-value-parser": {
+      "version": "4.2.0",
+      "resolved": "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz",
+      "integrity": "sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/queue-microtask": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz",
+      "integrity": "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/feross"
+        },
+        {
+          "type": "patreon",
+          "url": "https://www.patreon.com/feross"
+        },
+        {
+          "type": "consulting",
+          "url": "https://feross.org/support"
+        }
+      ],
+      "license": "MIT"
+    },
+    "node_modules/react": {
+      "version": "18.3.1",
+      "resolved": "https://registry.npmjs.org/react/-/react-18.3.1.tgz",
+      "integrity": "sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==",
+      "license": "MIT",
+      "dependencies": {
+        "loose-envify": "^1.1.0"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/react-dom": {
+      "version": "18.3.1",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-18.3.1.tgz",
+      "integrity": "sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==",
+      "license": "MIT",
+      "dependencies": {
+        "loose-envify": "^1.1.0",
+        "scheduler": "^0.23.2"
+      },
+      "peerDependencies": {
+        "react": "^18.3.1"
+      }
+    },
+    "node_modules/react-router": {
+      "version": "6.30.1",
+      "resolved": "https://registry.npmjs.org/react-router/-/react-router-6.30.1.tgz",
+      "integrity": "sha512-X1m21aEmxGXqENEPG3T6u0Th7g0aS4ZmoNynhbs+Cn+q+QGTLt+d5IQ2bHAXKzKcxGJjxACpVbnYQSCRcfxHlQ==",
+      "license": "MIT",
+      "dependencies": {
+        "@remix-run/router": "1.23.0"
+      },
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "peerDependencies": {
+        "react": ">=16.8"
+      }
+    },
+    "node_modules/react-router-dom": {
+      "version": "6.30.1",
+      "resolved": "https://registry.npmjs.org/react-router-dom/-/react-router-dom-6.30.1.tgz",
+      "integrity": "sha512-llKsgOkZdbPU1Eg3zK8lCn+sjD9wMRZZPuzmdWWX5SUs8OFkN5HnFVC0u5KMeMaC9aoancFI/KoLuKPqN+hxHw==",
+      "license": "MIT",
+      "dependencies": {
+        "@remix-run/router": "1.23.0",
+        "react-router": "6.30.1"
+      },
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "peerDependencies": {
+        "react": ">=16.8",
+        "react-dom": ">=16.8"
+      }
+    },
+    "node_modules/read-cache": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/read-cache/-/read-cache-1.0.0.tgz",
+      "integrity": "sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "pify": "^2.3.0"
+      }
+    },
+    "node_modules/readdirp": {
+      "version": "3.6.0",
+      "resolved": "https://registry.npmjs.org/readdirp/-/readdirp-3.6.0.tgz",
+      "integrity": "sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "picomatch": "^2.2.1"
+      },
+      "engines": {
+        "node": ">=8.10.0"
+      }
+    },
+    "node_modules/resolve": {
+      "version": "1.22.10",
+      "resolved": "https://registry.npmjs.org/resolve/-/resolve-1.22.10.tgz",
+      "integrity": "sha512-NPRy+/ncIMeDlTAsuqwKIiferiawhefFJtkNSW0qZJEqMEb+qBt/77B/jGeeek+F0uOeN05CDa6HXbbIgtVX4w==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "is-core-module": "^2.16.0",
+        "path-parse": "^1.0.7",
+        "supports-preserve-symlinks-flag": "^1.0.0"
+      },
+      "bin": {
+        "resolve": "bin/resolve"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/reusify": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/reusify/-/reusify-1.1.0.tgz",
+      "integrity": "sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "iojs": ">=1.0.0",
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/rollup": {
+      "version": "4.52.4",
+      "resolved": "https://registry.npmjs.org/rollup/-/rollup-4.52.4.tgz",
+      "integrity": "sha512-CLEVl+MnPAiKh5pl4dEWSyMTpuflgNQiLGhMv8ezD5W/qP8AKvmYpCOKRRNOh7oRKnauBZ4SyeYkMS+1VSyKwQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@types/estree": "1.0.8"
+      },
+      "bin": {
+        "rollup": "dist/bin/rollup"
+      },
+      "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+      },
+      "optionalDependencies": {
+        "@rollup/rollup-android-arm-eabi": "4.52.4",
+        "@rollup/rollup-android-arm64": "4.52.4",
+        "@rollup/rollup-darwin-arm64": "4.52.4",
+        "@rollup/rollup-darwin-x64": "4.52.4",
+        "@rollup/rollup-freebsd-arm64": "4.52.4",
+        "@rollup/rollup-freebsd-x64": "4.52.4",
+        "@rollup/rollup-linux-arm-gnueabihf": "4.52.4",
+        "@rollup/rollup-linux-arm-musleabihf": "4.52.4",
+        "@rollup/rollup-linux-arm64-gnu": "4.52.4",
+        "@rollup/rollup-linux-arm64-musl": "4.52.4",
+        "@rollup/rollup-linux-loong64-gnu": "4.52.4",
+        "@rollup/rollup-linux-ppc64-gnu": "4.52.4",
+        "@rollup/rollup-linux-riscv64-gnu": "4.52.4",
+        "@rollup/rollup-linux-riscv64-musl": "4.52.4",
+        "@rollup/rollup-linux-s390x-gnu": "4.52.4",
+        "@rollup/rollup-linux-x64-gnu": "4.52.4",
+        "@rollup/rollup-linux-x64-musl": "4.52.4",
+        "@rollup/rollup-openharmony-arm64": "4.52.4",
+        "@rollup/rollup-win32-arm64-msvc": "4.52.4",
+        "@rollup/rollup-win32-ia32-msvc": "4.52.4",
+        "@rollup/rollup-win32-x64-gnu": "4.52.4",
+        "@rollup/rollup-win32-x64-msvc": "4.52.4",
+        "fsevents": "~2.3.2"
+      }
+    },
+    "node_modules/run-parallel": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/run-parallel/-/run-parallel-1.2.0.tgz",
+      "integrity": "sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/feross"
+        },
+        {
+          "type": "patreon",
+          "url": "https://www.patreon.com/feross"
+        },
+        {
+          "type": "consulting",
+          "url": "https://feross.org/support"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "queue-microtask": "^1.2.2"
+      }
+    },
+    "node_modules/scheduler": {
+      "version": "0.23.2",
+      "resolved": "https://registry.npmjs.org/scheduler/-/scheduler-0.23.2.tgz",
+      "integrity": "sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==",
+      "license": "MIT",
+      "dependencies": {
+        "loose-envify": "^1.1.0"
+      }
+    },
+    "node_modules/shebang-command": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz",
+      "integrity": "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "shebang-regex": "^3.0.0"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/shebang-regex": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/shebang-regex/-/shebang-regex-3.0.0.tgz",
+      "integrity": "sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/signal-exit": {
+      "version": "4.1.0",
+      "resolved": "https://registry.npmjs.org/signal-exit/-/signal-exit-4.1.0.tgz",
+      "integrity": "sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==",
+      "dev": true,
+      "license": "ISC",
+      "engines": {
+        "node": ">=14"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/isaacs"
+      }
+    },
+    "node_modules/source-map-js": {
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
+      "dev": true,
+      "license": "BSD-3-Clause",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/string-width": {
+      "version": "5.1.2",
+      "resolved": "https://registry.npmjs.org/string-width/-/string-width-5.1.2.tgz",
+      "integrity": "sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "eastasianwidth": "^0.2.0",
+        "emoji-regex": "^9.2.2",
+        "strip-ansi": "^7.0.1"
+      },
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/string-width-cjs": {
+      "name": "string-width",
+      "version": "4.2.3",
+      "resolved": "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz",
+      "integrity": "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "emoji-regex": "^8.0.0",
+        "is-fullwidth-code-point": "^3.0.0",
+        "strip-ansi": "^6.0.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/string-width-cjs/node_modules/ansi-regex": {
+      "version": "5.0.1",
+      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz",
+      "integrity": "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/string-width-cjs/node_modules/emoji-regex": {
+      "version": "8.0.0",
+      "resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz",
+      "integrity": "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/string-width-cjs/node_modules/strip-ansi": {
+      "version": "6.0.1",
+      "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz",
+      "integrity": "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "ansi-regex": "^5.0.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/strip-ansi": {
+      "version": "7.1.2",
+      "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-7.1.2.tgz",
+      "integrity": "sha512-gmBGslpoQJtgnMAvOVqGZpEz9dyoKTCzy2nfz/n8aIFhN/jCE/rCmcxabB6jOOHV+0WNnylOxaxBQPSvcWklhA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "ansi-regex": "^6.0.1"
+      },
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "url": "https://github.com/chalk/strip-ansi?sponsor=1"
+      }
+    },
+    "node_modules/strip-ansi-cjs": {
+      "name": "strip-ansi",
+      "version": "6.0.1",
+      "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz",
+      "integrity": "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "ansi-regex": "^5.0.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/strip-ansi-cjs/node_modules/ansi-regex": {
+      "version": "5.0.1",
+      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz",
+      "integrity": "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/sucrase": {
+      "version": "3.35.0",
+      "resolved": "https://registry.npmjs.org/sucrase/-/sucrase-3.35.0.tgz",
+      "integrity": "sha512-8EbVDiu9iN/nESwxeSxDKe0dunta1GOlHufmSSXxMD2z2/tMZpDMpvXQGsc+ajGo8y2uYUmixaSRUc/QPoQ0GA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@jridgewell/gen-mapping": "^0.3.2",
+        "commander": "^4.0.0",
+        "glob": "^10.3.10",
+        "lines-and-columns": "^1.1.6",
+        "mz": "^2.7.0",
+        "pirates": "^4.0.1",
+        "ts-interface-checker": "^0.1.9"
+      },
+      "bin": {
+        "sucrase": "bin/sucrase",
+        "sucrase-node": "bin/sucrase-node"
+      },
+      "engines": {
+        "node": ">=16 || 14 >=14.17"
+      }
+    },
+    "node_modules/supports-preserve-symlinks-flag": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz",
+      "integrity": "sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/tailwindcss": {
+      "version": "3.4.18",
+      "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.18.tgz",
+      "integrity": "sha512-6A2rnmW5xZMdw11LYjhcI5846rt9pbLSabY5XPxo+XWdxwZaFEn47Go4NzFiHu9sNNmr/kXivP1vStfvMaK1GQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@alloc/quick-lru": "^5.2.0",
+        "arg": "^5.0.2",
+        "chokidar": "^3.6.0",
+        "didyoumean": "^1.2.2",
+        "dlv": "^1.1.3",
+        "fast-glob": "^3.3.2",
+        "glob-parent": "^6.0.2",
+        "is-glob": "^4.0.3",
+        "jiti": "^1.21.7",
+        "lilconfig": "^3.1.3",
+        "micromatch": "^4.0.8",
+        "normalize-path": "^3.0.0",
+        "object-hash": "^3.0.0",
+        "picocolors": "^1.1.1",
+        "postcss": "^8.4.47",
+        "postcss-import": "^15.1.0",
+        "postcss-js": "^4.0.1",
+        "postcss-load-config": "^4.0.2 || ^5.0 || ^6.0",
+        "postcss-nested": "^6.2.0",
+        "postcss-selector-parser": "^6.1.2",
+        "resolve": "^1.22.8",
+        "sucrase": "^3.35.0"
+      },
+      "bin": {
+        "tailwind": "lib/cli.js",
+        "tailwindcss": "lib/cli.js"
+      },
+      "engines": {
+        "node": ">=14.0.0"
+      }
+    },
+    "node_modules/thenify": {
+      "version": "3.3.1",
+      "resolved": "https://registry.npmjs.org/thenify/-/thenify-3.3.1.tgz",
+      "integrity": "sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "any-promise": "^1.0.0"
+      }
+    },
+    "node_modules/thenify-all": {
+      "version": "1.6.0",
+      "resolved": "https://registry.npmjs.org/thenify-all/-/thenify-all-1.6.0.tgz",
+      "integrity": "sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "thenify": ">= 3.1.0 < 4"
+      },
+      "engines": {
+        "node": ">=0.8"
+      }
+    },
+    "node_modules/to-regex-range": {
+      "version": "5.0.1",
+      "resolved": "https://registry.npmjs.org/to-regex-range/-/to-regex-range-5.0.1.tgz",
+      "integrity": "sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "is-number": "^7.0.0"
+      },
+      "engines": {
+        "node": ">=8.0"
+      }
+    },
+    "node_modules/ts-interface-checker": {
+      "version": "0.1.13",
+      "resolved": "https://registry.npmjs.org/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz",
+      "integrity": "sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==",
+      "dev": true,
+      "license": "Apache-2.0"
+    },
+    "node_modules/typescript": {
+      "version": "5.9.3",
+      "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+      "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+      "dev": true,
+      "license": "Apache-2.0",
+      "bin": {
+        "tsc": "bin/tsc",
+        "tsserver": "bin/tsserver"
+      },
+      "engines": {
+        "node": ">=14.17"
+      }
+    },
+    "node_modules/update-browserslist-db": {
+      "version": "1.1.3",
+      "resolved": "https://registry.npmjs.org/update-browserslist-db/-/update-browserslist-db-1.1.3.tgz",
+      "integrity": "sha512-UxhIZQ+QInVdunkDAaiazvvT/+fXL5Osr0JZlJulepYu6Jd7qJtDZjlur0emRlT71EN3ScPoE7gvsuIKKNavKw==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/browserslist"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/browserslist"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "escalade": "^3.2.0",
+        "picocolors": "^1.1.1"
+      },
+      "bin": {
+        "update-browserslist-db": "cli.js"
+      },
+      "peerDependencies": {
+        "browserslist": ">= 4.21.0"
+      }
+    },
+    "node_modules/util-deprecate": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz",
+      "integrity": "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/vite": {
+      "version": "5.4.20",
+      "resolved": "https://registry.npmjs.org/vite/-/vite-5.4.20.tgz",
+      "integrity": "sha512-j3lYzGC3P+B5Yfy/pfKNgVEg4+UtcIJcVRt2cDjIOmhLourAqPqf8P7acgxeiSgUB7E3p2P8/3gNIgDLpwzs4g==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "esbuild": "^0.21.3",
+        "postcss": "^8.4.43",
+        "rollup": "^4.20.0"
+      },
+      "bin": {
+        "vite": "bin/vite.js"
+      },
+      "engines": {
+        "node": "^18.0.0 || >=20.0.0"
+      },
+      "funding": {
+        "url": "https://github.com/vitejs/vite?sponsor=1"
+      },
+      "optionalDependencies": {
+        "fsevents": "~2.3.3"
+      },
+      "peerDependencies": {
+        "@types/node": "^18.0.0 || >=20.0.0",
+        "less": "*",
+        "lightningcss": "^1.21.0",
+        "sass": "*",
+        "sass-embedded": "*",
+        "stylus": "*",
+        "sugarss": "*",
+        "terser": "^5.4.0"
+      },
+      "peerDependenciesMeta": {
+        "@types/node": {
+          "optional": true
+        },
+        "less": {
+          "optional": true
+        },
+        "lightningcss": {
+          "optional": true
+        },
+        "sass": {
+          "optional": true
+        },
+        "sass-embedded": {
+          "optional": true
+        },
+        "stylus": {
+          "optional": true
+        },
+        "sugarss": {
+          "optional": true
+        },
+        "terser": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/which": {
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/which/-/which-2.0.2.tgz",
+      "integrity": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "isexe": "^2.0.0"
+      },
+      "bin": {
+        "node-which": "bin/node-which"
+      },
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/wrap-ansi": {
+      "version": "8.1.0",
+      "resolved": "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-8.1.0.tgz",
+      "integrity": "sha512-si7QWI6zUMq56bESFvagtmzMdGOtoxfR+Sez11Mobfc7tm+VkUckk9bW2UeffTGVUbOksxmSw0AA2gs8g71NCQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "ansi-styles": "^6.1.0",
+        "string-width": "^5.0.1",
+        "strip-ansi": "^7.0.1"
+      },
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "url": "https://github.com/chalk/wrap-ansi?sponsor=1"
+      }
+    },
+    "node_modules/wrap-ansi-cjs": {
+      "name": "wrap-ansi",
+      "version": "7.0.0",
+      "resolved": "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz",
+      "integrity": "sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "ansi-styles": "^4.0.0",
+        "string-width": "^4.1.0",
+        "strip-ansi": "^6.0.0"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "funding": {
+        "url": "https://github.com/chalk/wrap-ansi?sponsor=1"
+      }
+    },
+    "node_modules/wrap-ansi-cjs/node_modules/ansi-regex": {
+      "version": "5.0.1",
+      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz",
+      "integrity": "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/wrap-ansi-cjs/node_modules/ansi-styles": {
+      "version": "4.3.0",
+      "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz",
+      "integrity": "sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "color-convert": "^2.0.1"
+      },
+      "engines": {
+        "node": ">=8"
+      },
+      "funding": {
+        "url": "https://github.com/chalk/ansi-styles?sponsor=1"
+      }
+    },
+    "node_modules/wrap-ansi-cjs/node_modules/emoji-regex": {
+      "version": "8.0.0",
+      "resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz",
+      "integrity": "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/wrap-ansi-cjs/node_modules/string-width": {
+      "version": "4.2.3",
+      "resolved": "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz",
+      "integrity": "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "emoji-regex": "^8.0.0",
+        "is-fullwidth-code-point": "^3.0.0",
+        "strip-ansi": "^6.0.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/wrap-ansi-cjs/node_modules/strip-ansi": {
+      "version": "6.0.1",
+      "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz",
+      "integrity": "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "ansi-regex": "^5.0.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    }
+  }
+}
+
+===== package.json =====
+{
+  "name": "la-hache-contest",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.26",
+    "@types/react-dom": "^18.3.7",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
+  }
+}
+
+===== README_DEPLOY.md =====
+# La Hache Contest — Hotfix intégral
+Build avec Vite + React + TS. Base déjà configurée pour /la-hache-contest/.
+
+## Déploiement
+1. `npm i && npm run build`
+2. Copier le dossier `dist/` vers `/volume2/web/la-hache-contest/` (remplace les assets frontend)
+3. Garder /adapter le dossier `api/` côté serveur si tu as déjà une base SQLite existante.
+
+## Notes
+- Alias `@` → `src/`
+- `index.html` pointe vers `/src/main.tsx` (OK en dev; en prod Vite injecte les bundles).
+===== src/api/auth.tsx =====
+// src/api/auth.tsx
+import React from 'react'
+
+/* ===================== Types ===================== */
+
+export type Role = 'admin' | 'benevole'
+export type Me = { email: string; role: Role } | null
+
+type MeContextShape = {
+  me: Me
+  loading: boolean
+  setMe: React.Dispatch<React.SetStateAction<Me>>
+  refresh: () => Promise<void>
+}
+
+type MeApiResponse =
+  | { auth: true; user: { email: string; role: Role }; csrf?: string | null }
+  | { auth: false; user: null; csrf?: string | null }
+  | Record<string, unknown>
+
+type LoginResponse =
+  | { ok: true; user?: { email: string; role: Role } }
+  | { ok: false; error?: string }
+
+type RegisterPayload = {
+  first_name?: string
+  last_name?: string
+  name?: string
+  email: string
+  password: string
+  optin?: boolean
+}
+
+type RegisterResponse =
+  | { ok: true; user?: { email: string; role: Role } }
+  | { ok: false; error?: string }
+
+/* ===================== Helpers ===================== */
+
+const API_BASE = '/la-hache-contest/api'
+
+async function json<T = unknown>(res: Response): Promise<T> {
+  const ct = res.headers.get('content-type') || ''
+  if (ct.includes('application/json')) {
+    return (await res.json()) as T
+  }
+  const text = await res.text()
+  try { return JSON.parse(text) as T } catch { return {} as T }
+}
+
+// Type guards
+function isMeOk(d: any): d is { auth: true; user: { email: string; role: Role } } {
+  return !!d && d.auth === true && d.user && typeof d.user.email === 'string'
+}
+function isMeNone(d: any): d is { auth: false; user: null } {
+  return !!d && d.auth === false && d.user === null
+}
+
+/* ===================== Context ===================== */
+
+const MeContext = React.createContext<MeContextShape | null>(null)
+
+export function MeProvider({ children }: { children: React.ReactNode }) {
+  const [me, setMe] = React.useState<Me>(null)
+  const [loading, setLoading] = React.useState<boolean>(true)
+
+  const refresh = React.useCallback(async () => {
+    try {
+      setLoading(true)
+      const res = await fetch(`${API_BASE}/me.php`, {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-store' },
+      })
+      const data = await json<MeApiResponse>(res)
+      if (isMeOk(data)) {
+        setMe({ email: data.user.email, role: data.user.role })
+      } else if (isMeNone(data)) {
+        setMe(null)
+      } else {
+        setMe(null)
+      }
+    } catch {
+      setMe(null)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  React.useEffect(() => { void refresh() }, [refresh])
+
+  return (
+    <MeContext.Provider value={{ me, loading, setMe, refresh }}>
+      {children}
+    </MeContext.Provider>
+  )
+}
+
+export function useMe(): MeContextShape {
+  const ctx = React.useContext(MeContext)
+  if (!ctx) throw new Error('useMe must be used within <MeProvider>')
+  return ctx
+}
+
+/* ===================== API actions ===================== */
+
+export async function login(email: string, password: string): Promise<LoginResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/login.php`, {
+      method: 'POST',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+    const data = await json<any>(res)
+    if (!res.ok || (data && data.ok === false)) {
+      return { ok: false, error: (data && data.error) || `HTTP ${res.status}` }
+    }
+    return { ok: true, user: data?.user }
+  } catch (e: any) {
+    return { ok: false, error: e?.message || 'network_error' }
+  }
+}
+
+/** Signatures supportées :
+ *   - register({ first_name, last_name, email, password, optin })
+ *   - register(name, email, password)
+ */
+export async function register(payload: RegisterPayload): Promise<RegisterResponse>
+export async function register(name: string, email: string, password: string): Promise<RegisterResponse>
+export async function register(a: any, b?: any, c?: any): Promise<RegisterResponse> {
+  const body: RegisterPayload =
+    typeof a === 'string'
+      ? { name: a, email: String(b || ''), password: String(c || '') }
+      : a
+
+  try {
+    const res = await fetch(`${API_BASE}/register.php`, {
+      method: 'POST',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
+      body: JSON.stringify(body),
+    })
+    const data = await json<any>(res)
+    if (!res.ok || (data && data.ok === false)) {
+      return { ok: false, error: (data && data.error) || `HTTP ${res.status}` }
+    }
+    return { ok: true, user: data?.user }
+  } catch (e: any) {
+    return { ok: false, error: e?.message || 'network_error' }
+  }
+}
+
+export async function logout(): Promise<void> {
+  try {
+    await fetch(`${API_BASE}/logout.php`, {
+      method: 'POST',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-store' },
+    })
+  } catch { /* ignore */ }
+  try { localStorage.removeItem('csrf') } catch {}
+  try { sessionStorage.clear() } catch {}
+}
+
+/* ===================== Hooks pratiques ===================== */
+
+export function useAuthActions() {
+  const { setMe, refresh } = useMe()
+
+  const doLogin = React.useCallback(
+    async (email: string, password: string): Promise<LoginResponse> => {
+      const res = await login(email, password)
+      if (res.ok) await refresh()
+      return res
+    },
+    [refresh]
+  )
+
+  const doRegister = React.useCallback(
+    async (payloadOrName: any, email?: string, password?: string): Promise<RegisterResponse> => {
+      const res = await register(payloadOrName as any, email as any, password as any)
+      if (res.ok) await refresh()
+      return res
+    },
+    [refresh]
+  )
+
+  const doLogout = React.useCallback(async () => {
+    setMe(null)
+    await logout()
+  }, [setMe])
+
+  return { doLogin, doRegister, doLogout }
+}
+
+===== src/api/avail.ts =====
+// src/api/avail.ts
+import client from '@/api/client'
+
+export type AvailCell = 'none' | 'dispo' | 'juge' | 'build' | 'staff'
+export type AvailMap = Record<string, AvailCell>
+export type AvailWriteMap = Record<string, 'none' | 'dispo'>
+
+/** Charge les dispos (sans email = utilisateur courant) */
+export async function loadAvail(email?: string): Promise<AvailMap> {
+  const path = email ? `/avail_get.php?email=${encodeURIComponent(email)}` : `/avail_get.php`
+  const r = await client.request(path)
+  return (r?.avail ?? {}) as AvailMap
+}
+
+/** Écrase TOUT et réécrit uniquement les créneaux visibles */
+export async function saveAvail(avail: AvailWriteMap, email?: string): Promise<void> {
+  const body: any = { avail }
+  if (email) body.email = email
+  await client.request('/overwrite_avail.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+    body: JSON.stringify(body),
+  })
+}
+
+===== src/api/client.ts =====
+// src/api/client.ts
+const BASE = '/la-hache-contest/api'
+
+type ReqInit = RequestInit & { body?: any }
+
+async function parse(res: Response) {
+  const ct = res.headers.get('content-type') || ''
+  if (ct.includes('application/json')) return await res.json()
+  const text = await res.text()
+  try { return JSON.parse(text) } catch { return { raw: text } }
+}
+
+export default {
+  async request(path: string, init: ReqInit = {}) {
+    const url = path.startsWith('/') ? `${BASE}${path}` : `${BASE}/${path}`
+
+    const hasBody = init.body !== undefined && init.body !== null
+    const headers = new Headers(init.headers || {})
+    if (hasBody && !headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json')
+    }
+
+    const res = await fetch(url, {
+      method: init.method || (hasBody ? 'POST' : 'GET'),
+      credentials: 'include',          // <<=== cookies de session envoyés
+      cache: 'no-store',
+      headers,
+      body: hasBody ? (typeof init.body === 'string' ? init.body : JSON.stringify(init.body)) : undefined,
+    })
+
+    const data = await parse(res)
+    if (!res.ok) {
+      throw new Error((data && (data.error || data.message)) || `HTTP ${res.status}`)
+    }
+    return data
+  }
+}
+
+===== src/api/dispos.ts =====
+// src/api/dispos.ts
+import api from './client'
+export type AvailMap = Record<string, 'none'|'dispo'|'juge'|'build'>
+
+export async function loadAvail(email?: string): Promise<{avail:AvailMap}> {
+  const qs = email ? `?email=${encodeURIComponent(email)}` : ''
+  return api.request(`/avail_get.php${qs}`)
+}
+
+export async function saveAvail(avail: AvailMap, email?: string): Promise<void> {
+  const body: any = { avail }
+  if (email) body.email = email
+  await api.request('/avail_save.php', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
+}
+
+===== src/api/heats.ts =====
+// src/api/heats.ts
+import client from '@/api/client'
+
+export type Line = {
+  equipe: string
+  juge: string
+  build: string
+}
+
+export type Heat = {
+  day: 'samedi'|'dimanche'|string
+  start: string
+  wod: string
+  heat: number
+  lignes: Line[]
+}
+
+/** Charge tous les heats (JSON normalisé) */
+export async function getHeats(): Promise<Heat[]> {
+  const data: any = await client.request('/heats_get.php')
+  const arr = Array.isArray(data?.heats) ? data.heats : (Array.isArray(data) ? data : [])
+  return arr.map((h: any) => ({
+    day: String(h.day ?? h.jour ?? '').toLowerCase() || 'samedi',
+    start: String(h.start ?? h.heure ?? ''),
+    wod: String(h.wod ?? ''),
+    heat: Number(h.heat ?? h.numero ?? 0),
+    lignes: Array.isArray(h.lignes)
+      ? h.lignes.map((ln: any) => ({
+          equipe: String(ln?.equipe ?? ''),
+          juge: String(ln?.juge ?? ''),
+          build: String(ln?.build ?? ''),
+        }))
+      : [],
+  })) as Heat[]
+}
+
+/** Sauvegarde des heats (même structure que getHeats) */
+export async function saveHeats(heats: Heat[]): Promise<void> {
+  await client.request('/heats_save.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ heats }),
+  })
+}
+
+/** Répartition globale (tous les heats) */
+export async function repartir(): Promise<Heat[]> {
+  const data: any = await client.request('/repartir_heats.php', {
+    method: 'POST',
+    headers: { 'Cache-Control': 'no-store' },
+  })
+  const arr = Array.isArray(data?.heats) ? data.heats : (Array.isArray(data) ? data : [])
+  return arr as Heat[]
+}
+
+===== src/api/teams.ts =====
+// src/api/teams.ts
+import client from '@/api/client'
+
+export type TeamCat = ''|'Régular'|'Inter'|'RX'
+export type Team = { id:string; name:string; cat:TeamCat }
+
+export async function loadTeams(): Promise<Team[]>{
+  const r = await client.request('/teams_get.php')
+  return (r?.teams ?? []) as Team[]
+}
+
+export async function saveTeams(teams: Team[]): Promise<void>{
+  await client.request('/teams_save.php', { method:'POST', body: JSON.stringify({teams}) })
+}
+
+===== src/api/users.ts =====
+// src/api/users.ts
+import client from '@/api/client'
+
+export type User = {
+  id?: number
+  name?: string
+  email?: string
+  role?: 'admin' | 'benevole'
+  poste?: 'juge' | 'build' | 'staff' | null
+  is_active?: number | boolean
+}
+
+export async function listUsers(): Promise<User[]> {
+  const r = await client.request('/users_list.php')
+  const arr = Array.isArray(r?.users) ? r.users : []
+  return arr as User[]
+}
+
+export async function updateUser(opts: {
+  email: string
+  role?: 'admin'|'benevole'
+  poste?: 'juge'|'build'|'staff'|null
+  is_active?: boolean
+}): Promise<void> {
+  await client.request('/users_update.php', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json' },
+    body: JSON.stringify(opts),
+  })
+}
+
+===== src/App.tsx =====
+// src/App.tsx
+import React from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import Planning from '@/pages/Planning'
+import MesDispos from '@/pages/MesDispos'
+import HeatsPage from '@/pages/Heats'
+import Admin from '@/pages/Admin'
+import Stats from '@/pages/Stats'
+import Login from '@/pages/Login'
+import Register from '@/pages/Register'
+import { useMe } from '@/api/auth'
+import Teams from '@/pages/Teams'   // <-- NEW
+
+function NavBar(){
+  const { me, setMe } = useMe()
+  const doLogout = async ()=>{
+    setMe(null)
+    try { await fetch('/la-hache-contest/api/logout.php',{method:'POST',credentials:'include',cache:'no-store',headers:{'Cache-Control':'no-store'}}) } catch {}
+    try { localStorage.removeItem('csrf') } catch {}
+    try { sessionStorage.clear() } catch {}
+    window.location.replace('/la-hache-contest/#/login')
+  }
+
+  return (
+    <header className="sticky top-0 z-50 bg-white border-b mb-3">
+      <div className="max-w-6xl mx-auto p-3 flex gap-3 items-center">
+        <a className="underline" href="/la-hache-contest/#/">Planning</a>
+        <a className="underline" href="/la-hache-contest/#/dispos">Mes disponibilités</a>
+        <a className="underline" href="/la-hache-contest/#/stats">Stats</a>
+        <a className="underline" href="/la-hache-contest/#/teams">Teams</a> {/* <-- NEW (public, lecture seule) */}
+        {me?.role === 'admin' && <a className="underline" href="/la-hache-contest/#/heats">Heats</a>}
+        {me?.role === 'admin' && <a className="underline" href="/la-hache-contest/#/admin">Admin</a>}
+        {!me && <a className="underline ml-auto" href="/la-hache-contest/#/login">Login</a>}
+        {me && (
+          <div className="ml-auto flex items-center gap-2">
+            <span>Connecté: {me.email} ({me.role})</span>
+            <button onClick={doLogout} className="px-2 py-1 rounded bg-neutral-200">Logout</button>
+          </div>
+        )}
+      </div>
+    </header>
+  )
+}
+
+function RequireAdmin({ children }: { children: React.ReactNode }){
+  const { me, loading } = useMe()
+  const loc = useLocation()
+  if (loading) return <div className="p-6">Chargement…</div>
+  if (!me) return <Navigate to="/login" replace state={{ from: loc }} />
+  if (me.role !== 'admin') return <Navigate to="/" replace />
+  return <>{children}</>
+}
+
+export default function App(){
+  const { loading } = useMe()
+  if (loading) return <div className="p-6">Chargement…</div>
+
+  return (
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Planning />} />
+        <Route path="/dispos" element={<MesDispos />} />
+        <Route path="/stats" element={<Stats />} />
+        <Route path="/teams" element={<Teams />} />   {/* <-- NEW */}
+        <Route path="/heats" element={<RequireAdmin><HeatsPage/></RequireAdmin>} />
+        <Route path="/admin" element={<RequireAdmin><Admin/></RequireAdmin>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </div>
+  )
+}
+
+===== src/components/DisposGrid.tsx =====
+import React from 'react'
+import { SLOTS } from '@/utils/time'
+
+export type Cell = 'none' | 'dispo'
+const DAYS = ['samedi','dimanche'] as const
+type Day = typeof DAYS[number]
+
+export default function DisposGrid({
+  value, onChange, assigned
+}:{
+  value: Record<string, Cell>,
+  onChange: (next: Record<string, Cell>) => void,
+  // clé = "samedi 09:00" etc. valeur = 'juge' | 'build' | 'staff'
+  assigned?: Record<string, 'juge'|'build'|'staff'>
+}){
+  const [brush, setBrush] = React.useState<Cell>('dispo')
+
+  const cls = (c:Cell) => c==='dispo' ? 'role-dispo' : 'role-none'
+  const keyOf = (day:Day, slot:string)=> `${day} ${slot}`
+
+  const applyBrush = (k: string) => {
+    if ((value[k] as Cell) === brush) return
+    onChange({ ...value, [k]: brush })
+  }
+  const cycle = (c: Cell): Cell => (c==='none' ? 'dispo' : 'none')
+
+  const draggingRef = React.useRef(false)
+  const onStart = () => { draggingRef.current = true }
+  const onEnd = () => { draggingRef.current = false }
+
+  React.useEffect(()=>{
+    const up = () => onEnd()
+    document.addEventListener('pointerup', up, { passive: true })
+    document.addEventListener('pointercancel', up, { passive: true })
+    return ()=> {
+      document.removeEventListener('pointerup', up)
+      document.removeEventListener('pointercancel', up)
+    }
+  }, [])
+
+  const onContainerPointerMove = (e: React.PointerEvent<HTMLDivElement>)=>{
+    if (!draggingRef.current) return
+    const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null
+    if (!el) return
+    const target = el.closest<HTMLElement>('button[data-key]')
+    if (!target) return
+    const k = target.dataset.key
+    if (k) applyBrush(k)
+    e.preventDefault()
+  }
+
+  const onCellPointerDown = ()=>{ onStart() }
+  const onCellPointerUp = (k: string, current: Cell)=>{
+    const wasDragging = draggingRef.current
+    draggingRef.current = false
+    if (!wasDragging) onChange({ ...value, [k]: cycle(current) })
+  }
+
+  const showLabel = (slot:string)=> slot.slice(-2) === '00'
+
+  return (
+    <div className="dispos-grid">
+      <div className="flex items-center gap-2 mb-2">
+        <span>Peindre :</span>
+        <button className="btn" aria-pressed={brush==='dispo'} style={{ fontWeight: brush==='dispo' ? 600 : 400 }} onClick={()=>setBrush('dispo')}>Disponible</button>
+        <button className="btn" aria-pressed={brush==='none'}  style={{ fontWeight: brush==='none'  ? 600 : 400 }} onClick={()=>setBrush('none')}>Pas dispo</button>
+      </div>
+
+      <div onPointerMove={onContainerPointerMove}>
+        <div className="dispos-hz">
+          {(['samedi','dimanche'] as Day[]).map(day=>(
+            <div className="dispos-row" key={day}>
+              <div className="dispos-day">{day}</div>
+              <div className="dispos-scroller">
+                <div className="dispos-line">
+                  {SLOTS.map(slot=>{
+                    const k = keyOf(day, slot)
+                    const c = (value[k] ?? 'none') as Cell
+
+                    // Surcouche couleur selon rôle réellement attribué
+                    const role = assigned?.[k]
+                    const roleClass =
+                      role==='juge'  ? 'as-juge'  :
+                      role==='build' ? 'as-build' :
+                      role==='staff' ? 'as-staff' : ''
+
+                    return (
+                      <button
+                        key={slot}
+                        className={`dispos-cell ${cls(c)} ${roleClass}`}
+                        title={`${day} ${slot}`}
+                        data-key={k}
+                        style={{ touchAction: 'none' }}
+                        onPointerDown={onCellPointerDown}
+                        onPointerUp={()=>onCellPointerUp(k,c)}
+                      >
+                        {showLabel(slot) && <span className="hour-label">{slot}</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+===== src/hooks/useUsers.ts =====
+// src/hooks/useUsers.ts
+import React from 'react'
+import client from '@/api/client'
+
+export type User = {
+  id?: number
+  name?: string
+  email: string
+  role?: string
+  is_active?: number
+  poste?: string | null
+}
+
+export function useUsers() {
+  const [users, setUsers] = React.useState<User[]>([])
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const r = await client.request('/users_list.php')
+        const arr = (r?.users ?? []) as any[]
+        const norm = arr.map(u => ({
+          ...u,
+          email: String(u.email || '').toLowerCase(),
+          name: String(u.name || '').trim(),
+        }))
+        setUsers(norm)
+      } catch {
+        setUsers([])
+      }
+    })()
+  }, [])
+  return { users }
+}
+
+export function useUserMap() {
+  const { users } = useUsers()
+  const map = React.useMemo(() => {
+    const m = new Map<string, User>()
+    users.forEach(u => m.set((u.email || '').toLowerCase(), u))
+    return m
+  }, [users])
+
+  const resolve = (email?: string, short = false): string => {
+    const e = (email || '').toLowerCase()
+    const u = map.get(e)
+    if (!u) return email || ''
+    const display = (u.name && u.name.trim()) ? u.name.trim() : (u.email || '')
+    if (!short) return display
+
+    // Prénom (+ initiale si homonyme)
+    const parts = display.split(/\s+/)
+    let label = parts[0] || display
+    const sameFirst = users.filter(x => (x.name || '').split(/\s+/)[0] === parts[0]).length > 1
+    if (sameFirst && parts[1]) label += ' ' + parts[1][0].toUpperCase() + '.'
+    return label
+  }
+
+  return { users, map, resolve }
+}
+
+===== src/index.css =====
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================
+   THEME & COLORS (modifiable ici)
+   =========================
+   Pour chaque rôle, tu as:
+   - --role-*-bg : couleur de fond
+   - --role-*-fg : couleur de texte
+*/
+:root {
+  /* Dispo (OK) */
+  --role-ok-bg: #dcfce7;   /* vert pastel */
+  --role-ok-fg: #065f46;   /* vert foncé lisible */
+
+  /* Juge */
+  --role-juge-bg: #78866b; /* kaki clair */
+  --role-juge-fg: #ffffff; /* blanc */
+  
+  /* Build */
+  --role-build-bg: #ebe0c6; /* beige */
+  --role-build-fg: #000000; /* noir */
+
+  /* Staff */
+  --role-staff-bg: #ffeb3b; /* jaune vif */
+  --role-staff-fg: #78866b; /* kaki clair */
+}
+
+/* =========================
+   BASE TYPO & LAYOUT
+   ========================= */
+:root {
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
+}
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: #111;
+  background: #fafafa;
+  font-size: 10px;
+}
+h1 { font-size: 14px; margin: 0; }
+h2 { font-size: 12px; margin: 0; }
+a { color: #111; text-decoration: none; }
+button { cursor: pointer; background: none; border: none; }
+
+/* Card */
+.pastel-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+/* Light utils */
+.text-sm { font-size: 10px; }
+.text-xs { font-size: 9px; }
+.text-xl { font-size: 14px; }
+.font-semibold { font-weight: 600; }
+.mb-2 { margin-bottom: 6px; }
+.mb-3 { margin-bottom: 8px; }
+.mt-3 { margin-top: 8px; }
+.max-w-6xl { max-width: 72rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.p-4 { padding: 12px; }
+.p-3 { padding: 8px; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-2 { gap: 6px; }
+.gap-3 { gap: 8px; }
+.border { border: 1px solid #e5e7eb; }
+.border-b { border-bottom: 1px solid #e5e7eb; }
+.rounded { border-radius: 8px; }
+.bg-white { background: #fff; }
+.sticky { position: sticky; }
+.top-0 { top: 0; }
+.z-50 { z-index: 50; }
+
+/* =========================
+   BUTTONS / INPUTS (COMPACT)
+   ========================= */
+.btn { padding: 2px 6px; border: 1px solid #e5e7eb; border-radius: 6px; background: #f3f4f6; font-size: 10px; }
+.btn--primary { background: #111; color: #fff; border-color: #111; }
+.btn--danger { background: #fee2e2; border-color: #fecaca; }
+.input { border: 1px solid #e5e7eb; border-radius: 7px; padding: 2px 6px; width: 100%; font-size: 10px; }
+
+/* =========================
+   MES DISPONIBILITÉS (HORIZONTAL)
+   ========================= */
+.dispos-hz { display: grid; gap: 6px; }
+.dispos-row { display: grid; grid-template-columns: 58px 1fr; align-items: center; gap: 6px; }
+.dispos-day { font-weight: 600; text-transform: capitalize; text-align: right; }
+.dispos-scroller { overflow-x: auto; }
+.dispos-line { display: grid; grid-auto-flow: column; grid-auto-columns: 22px; gap: 2px; }
+.dispos-cell {
+  width: 22px; height: 16px; border-radius: 4px; border: 1px solid #e5e7eb;
+  display: flex; align-items: center; justify-content: center;
+  user-select: none; transition: transform .02s ease, box-shadow .1s ease;
+  position: relative; touch-action: none;
+}
+.dispos-cell:active { transform: scale(.985); }
+.hour-label { font-size: 9px; line-height: 1; color: #374151; white-space: nowrap; }
+
+/* Etats (OK / Pas dispo) */
+.role-none  { background: #ffffff; color: #6b7280; }
+.role-dispo { background: var(--role-ok-bg); color: var(--role-ok-fg); }
+
+/* Toolbar pinceau */
+.tools { display: flex; align-items: center; gap: 6px; }
+.tool  { padding: 3px 7px; border-radius: 7px; border: 1px solid #e5e7eb; background: #f3f4f6; }
+.tool--active { border-color: #111; background: #111; color: #fff; }
+
+/* =========================
+   TABLES / PLANNING / HEATS
+   ========================= */
+.table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.table th, .table td { padding: 1px 3px; border-bottom: 1px solid #eef2f7; }
+.cell-compact { display: grid; gap: 0; }
+.line-compact { display: flex; align-items: center; gap: 1px; min-height: 12px; }
+
+/* Pastilles (planning / heats) */
+.chip {
+  display:inline-block; padding:0 3px; border-radius:999px;
+  font-size:10px; line-height:13px;
+}
+.chip-juge  { background: var(--role-juge-bg);  color: var(--role-juge-fg); }
+.chip-build { background: var(--role-build-bg); color: var(--role-build-fg); }
+.chip-staff { background: var(--role-staff-bg); color: var(--role-staff-fg); }
+/* Alerte: équipe saisie mais rôle(s) manquant(s) */
+.slot-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px; }
+.slot--incomplete { background: #fee2e2; border: 2px solid #ef4444; }
+
+
+/* =========================
+   STATS (BAR CHART)
+   ========================= */
+.legend { display:flex; align-items:center; gap:12px; }
+.legend .dot { display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; }
+.dot-juge  { background: var(--role-juge-bg); }
+.dot-build { background: var(--role-build-bg); }
+.dot-staff { background: var(--role-staff-bg); }
+
+.legend-swatch {
+  display:inline-block;
+  width:12px; height:12px;
+  border-radius:3px;
+  vertical-align:middle;
+  margin-right:6px;
+  border:1px solid rgba(0,0,0,.08);
+}
+
+/* role-dispo, chip-juge, chip-build, need-juge, need-build
+   existent déjà dans ton CSS — la pastille hérite juste du background/border */
+
+.stats-row { margin-top: 8px; }
+.stats-title { font-weight: 600; margin-bottom: 6px; }
+.stats-bars {
+  display:flex; gap:8px; overflow:auto; padding:6px 0 12px;
+  align-items:flex-end; height:160px;
+}
+.bar-group {
+  position:relative; width:26px; display:flex; align-items:flex-end; gap:2px;
+  height:100%; /* indispensable pour que .bar {height:%} fonctionne */
+}
+.bar { width:6px; border-radius:2px 2px 0 0; }
+.bar-juge  { background: var(--role-juge-bg); }
+.bar-build { background: var(--role-build-bg); }
+.bar-staff { background: var(--role-staff-bg); }
+.bar-label {
+  position:absolute; bottom:-14px; left:50%; transform:translateX(-50%);
+  font-size:9px; white-space:nowrap;
+}
+
+/* =========================
+   NAVBAR (optionnel)
+   ========================= */
+.header { position: sticky; top: 0; z-index: 50; background: #fff; border-bottom: 1px solid #e5e7eb; }
+.header-inner { max-width: 72rem; margin: 0 auto; padding: 8px 12px; display: flex; gap: 8px; align-items: center; }
+
+/* Surcouche couleur d'attribution réelle sur la grille de dispo */
+.dispos-cell.as-juge  { background: var(--role-juge-bg)  !important; color: var(--role-juge-fg); }
+.dispos-cell.as-build { background: var(--role-build-bg) !important; color: var(--role-build-fg); }
+.dispos-cell.as-staff { background: var(--role-staff-bg) !important; color: var(--role-staff-fg); }
+/* Tooltip numérique sur les barres (affiché au survol) */
+.bar { position: relative; }
+.bar-tip {
+  position: absolute;
+  display: none;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, -4px);
+  background: #111;
+  color: #fff;
+  font-size: 9px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.bar:hover .bar-tip { display: inline-block; }
+
+===== src/main.tsx =====
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import { HashRouter } from 'react-router-dom'
+import { MeProvider } from '@/api/auth'
+import '@/index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <HashRouter>
+      <MeProvider>
+        <App />
+      </MeProvider>
+    </HashRouter>
+  </React.StrictMode>
+)
+
+===== src/pages/Admin.tsx =====
+// src/pages/Admin.tsx
+import React from 'react'
+import { useMe } from '@/api/auth'
+import { loadAvail, saveAvail, type AvailMap, type AvailWriteMap } from '@/api/avail'
+import { useUsers, useUserMap } from '@/hooks/useUsers'
+import client from '@/api/client'
+
+// Grille commune (doit matcher MesDispos)
+const DAYS: Array<'samedi' | 'dimanche'> = ['samedi', 'dimanche']
+const HOURS = [
+  '07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30',
+  '11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30',
+  '15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30',
+  '19:00','19:30','20:00' // stop à 20:00
+]
+const keyOf = (day: string, hhmm: string) => `${day} ${hhmm}`
+
+// Filtre d’export (identique MesDispos)
+const H_MAX = 20
+function parseHM(s: string): [number, number] | null {
+  const m = /^([0-2]\d):([0-5]\d)$/.exec(s)
+  if (!m) return null
+  return [parseInt(m[1], 10), parseInt(m[2], 10)]
+}
+function isAllowedKey(key: string): boolean {
+  const m = /^(samedi|dimanche)\s+([0-2]\d:[0-5]\d)$/.exec(key.toLowerCase().trim())
+  if (!m) return false
+  const hm = parseHM(m[2]!)
+  if (!hm) return false
+  const [h, mi] = hm
+  if (!(mi === 0 || mi === 30)) return false
+  if (h < H_MAX) return true
+  if (h === H_MAX && mi === 0) return true
+  return false
+}
+
+type MinimalUser = {
+  email: string
+  role?: 'admin' | 'user'
+  is_active?: number
+  poste?: 'juge' | 'build' | 'staff' | null
+  name?: string
+}
+
+type HeatLine = { equipe?: string; juge?: string; build?: string }
+type Heat = { day?: string; jour?: string; start?: string; heure?: string; lignes?: HeatLine[] }
+
+export default function Admin() {
+  const { me } = useMe()
+  const { users } = useUsers()
+  const { resolve } = useUserMap()
+
+  const [selectedEmail, setSelectedEmail] = React.useState<string>('')
+  const [map, setMap] = React.useState<AvailMap>({})
+  const [loading, setLoading] = React.useState(false)
+  const [saving, setSaving] = React.useState(false)
+  const [msg, setMsg] = React.useState<string | null>(null)
+  const [err, setErr] = React.useState<string | null>(null)
+
+  // outil pinceau
+  type Brush = 'none' | 'dispo'
+  const [brush, setBrush] = React.useState<Brush>('dispo')
+  const [painting, setPainting] = React.useState(false)
+
+  // overlays de rôle d’après les heats
+  const [asJuge, setAsJuge] = React.useState<Record<string, true>>({})
+  const [asBuild, setAsBuild] = React.useState<Record<string, true>>({})
+
+  // overrides locaux (role/poste/active) pour reflet immédiat
+  const [overrides, setOverrides] = React.useState<Record<string, Partial<MinimalUser>>>({})
+
+  // charge dispos
+  const doLoadAvail = async (email: string) => {
+    setLoading(true); setErr(null); setMsg(null)
+    try {
+      const m = await loadAvail(email)
+      setMap(m)
+    } catch (e: any) {
+      setErr(e?.message || 'Erreur de chargement des disponibilités')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // charge heats pour colorer les créneaux (as-juge/as-build)
+  const doLoadRoleOverlay = async (email: string) => {
+    try {
+      const data: any = await client.request('/heats_get.php', { headers: { 'Cache-Control': 'no-store' } })
+      const heats: Heat[] = Array.isArray(data?.heats) ? data.heats : (Array.isArray(data) ? data : [])
+      const jj: Record<string, true> = {}
+      const bb: Record<string, true> = {}
+
+      for (const h of heats) {
+        const day = String(h.day ?? h.jour ?? '').toLowerCase()
+        const start = String(h.start ?? h.heure ?? '')
+        if (!day || !start) continue
+        const key = `${day} ${start}`
+        for (const ln of (h.lignes ?? [])) {
+          const j = (ln.juge ?? '').toLowerCase()
+          const b = (ln.build ?? '').toLowerCase()
+          if (j && j === email.toLowerCase()) jj[key] = true
+          if (b && b === email.toLowerCase()) bb[key] = true
+        }
+      }
+      setAsJuge(jj)
+      setAsBuild(bb)
+    } catch (_) {
+      setAsJuge({})
+      setAsBuild({})
+    }
+  }
+
+  // tri alphabétique par libellé affiché
+  const sortedUsers = React.useMemo(() => {
+    const list = [...users]
+    list.sort((a: any, b: any) => {
+      const ea = (a?.email || '').toLowerCase()
+      const eb = (b?.email || '').toLowerCase()
+      const la = (resolve(ea, true) || ea).toLowerCase()
+      const lb = (resolve(eb, true) || eb).toLowerCase()
+      if (la < lb) return -1
+      if (la > lb) return 1
+      return 0
+    })
+    return list
+  }, [users, resolve])
+
+  React.useEffect(() => {
+    if (!selectedEmail && sortedUsers.length) {
+      const first = sortedUsers.find((u: any) => !!u.email)?.email?.toLowerCase() || ''
+      setSelectedEmail(first)
+      if (first) { void doLoadAvail(first); void doLoadRoleOverlay(first) }
+    }
+  }, [sortedUsers]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  React.useEffect(() => {
+    if (selectedEmail) { void doLoadRoleOverlay(selectedEmail) }
+  }, [selectedEmail])
+
+  // Navigation 🔼 / 🔽 entre bénévoles (sur la liste triée)
+  const gotoDelta = (delta: number) => {
+    if (!sortedUsers.length) return
+    const list = sortedUsers.map((u: any) => (u.email || '').toLowerCase()).filter(Boolean)
+    const i = Math.max(0, list.indexOf((selectedEmail || '').toLowerCase()))
+    const j = (i + delta + list.length) % list.length
+    const next = list[j]
+    setSelectedEmail(next)
+    void doLoadAvail(next)
+    void doLoadRoleOverlay(next)
+  }
+
+  const toggleCell = (day: 'samedi' | 'dimanche', hhmm: string, value?: Brush) => {
+    const k = keyOf(day, hhmm)
+    setMap(prev => {
+      const v = value ?? (prev[k] === 'dispo' ? 'none' : 'dispo')
+      return { ...prev, [k]: v }
+    })
+  }
+
+  const onSave = async () => {
+    if (!selectedEmail) { setErr('Sélectionne un bénévole.'); return }
+    setSaving(true); setErr(null); setMsg(null)
+    try {
+      // On envoie uniquement 'dispo' + clés autorisées + ≤20:00
+      const out: AvailWriteMap = {}
+      Object.entries(map).forEach(([k, v]) => {
+        if (v === 'dispo' && isAllowedKey(k)) out[k] = 'dispo'
+      })
+      await saveAvail(out, selectedEmail)
+      setMsg('Disponibilités enregistrées ✅')
+      await doLoadAvail(selectedEmail)
+      await doLoadRoleOverlay(selectedEmail)
+    } catch (e: any) {
+      setErr(e?.message || 'Erreur à l’enregistrement')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // --- Normalisation stricte pour matcher MinimalUser (fixe TS) ---
+  const toMinimalUser = React.useCallback((u: any): MinimalUser => {
+    const role = (u?.role === 'admin') ? 'admin' : 'user'
+    const poste = (u?.poste === 'juge' || u?.poste === 'build' || u?.poste === 'staff') ? u.poste : null
+    return {
+      email: (u?.email || '').toLowerCase(),
+      role,
+      poste,
+      is_active: typeof u?.is_active === 'number' ? u.is_active : (u?.is_active ? 1 : 0),
+      name: u?.name ?? undefined,
+    }
+  }, [])
+
+  const baseSelected: MinimalUser | undefined = React.useMemo(() => {
+    const e = (selectedEmail || '').toLowerCase()
+    const found = users.find((u: any) => (u.email || '').toLowerCase() === e)
+    return found ? toMinimalUser(found) : undefined
+  }, [users, selectedEmail, toMinimalUser])
+
+  const selected: MinimalUser | undefined = React.useMemo(() => {
+    if (!baseSelected) return undefined
+    const ov = overrides[(baseSelected.email || '').toLowerCase()] || {}
+    return { ...baseSelected, ...ov }
+  }, [baseSelected, overrides])
+
+  async function updateUser(payload: Partial<MinimalUser>) {
+    setErr(null); setMsg(null)
+    const email = selectedEmail
+    try {
+      const res = await fetch('/la-hache-contest/api/users_update.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+        credentials: 'include',
+        cache: 'no-store',
+        body: JSON.stringify({ email, ...payload }),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+      // applique override local immédiat
+      setOverrides(prev => ({
+        ...prev,
+        [email.toLowerCase()]: { ...(prev[email.toLowerCase()] || {}), ...payload }
+      }))
+
+      setMsg('Modification enregistrée ✅')
+    } catch (e: any) {
+      setErr(e?.message || 'Erreur mise à jour utilisateur')
+    }
+  }
+
+  const toggleActive = async () => {
+    if (!selected) return
+    await updateUser({ is_active: selected.is_active ? 0 : 1 })
+  }
+
+  const toggleAdmin = async () => {
+    if (!selected) return
+    const isSelf = (me?.email || '').toLowerCase() === (selectedEmail || '').toLowerCase()
+    const next = (selected.role === 'admin') ? 'user' : 'admin'
+    if (isSelf && next === 'user') return // interdit de se rétrograder soi-même
+    await updateUser({ role: next as 'admin' | 'user' })
+  }
+
+  const setPoste = async (poste: 'juge'|'build'|'staff'|null) => {
+    await updateUser({ poste })
+  }
+
+  const isSelf = (me?.email || '').toLowerCase() === (selectedEmail || '').toLowerCase()
+  const isAdmin = (selected?.role === 'admin')
+
+  // style « cadre » visible sur rôle actif (on force via style inline)
+  const roleBtnStyle = (active: boolean): React.CSSProperties =>
+    active ? { border: '2px solid #111', boxShadow: '0 0 0 1px #111 inset' } : {}
+
+  return (
+    <div className="pastel-card space-y-3">
+      <div className="flex items-center gap-2">
+        <h1 className="text-xl font-semibold">Admin — Disponibilités bénévoles</h1>
+
+        <select
+          className="input"
+          value={selectedEmail}
+          onChange={e => { const v=(e.target.value||'').toLowerCase(); setSelectedEmail(v); void doLoadAvail(v); void doLoadRoleOverlay(v) }}
+          style={{ minWidth: 260 }}
+          title="Choisir un bénévole"
+        >
+          {sortedUsers.map((u: any) => {
+            const e = (u.email||'').toLowerCase()
+            return (
+              <option key={e} value={e}>
+                {resolve(e, true)}
+              </option>
+            )
+          })}
+        </select>
+
+        {/* 🔼 / 🔽 navigation entre bénévoles (sur la liste triée) */}
+        <button
+          className="tool"
+          onClick={() => gotoDelta(-1)}
+          title="Bénévole précédent"
+          aria-label="Bénévole précédent"
+        >🔼</button>
+        <button
+          className="tool"
+          onClick={() => gotoDelta(1)}
+          title="Bénévole suivant"
+          aria-label="Bénévole suivant"
+        >🔽</button>
+
+        {/* === Boutons d'actions user (emojis only) === */}
+        {selected && (
+          <div className="flex items-center gap-2">
+            {/* Activer / Désactiver */}
+            <button
+              className="btn"
+              title={selected.is_active ? 'Désactiver' : 'Activer'}
+              onClick={toggleActive}
+            >
+              {selected.is_active ? '🚫' : '✅'}
+            </button>
+
+            {/* Promouvoir / Retirer admin (on cache la rétrogradation si c’est soi-même) */}
+            {isAdmin ? (
+              !isSelf && (
+                <button
+                  className="btn"
+                  title="Retirer admin"
+                  onClick={toggleAdmin}
+                >⬇️</button>
+              )
+            ) : (
+              <button
+                className="btn"
+                title="Promouvoir admin"
+                onClick={toggleAdmin}
+              >⬆️</button>
+            )}
+
+            {/* Poste: Juge / Build / Staff (cadre sur le rôle actif) */}
+            <div className="flex items-center gap-1" title="Définir le poste">
+              <button
+                className="btn"
+                style={roleBtnStyle(selected.poste === 'juge')}
+                onClick={() => setPoste('juge')}
+                title="Rôle: Juge"
+              >⚖️</button>
+              <button
+                className="btn"
+                style={roleBtnStyle(selected.poste === 'build')}
+                onClick={() => setPoste('build')}
+                title="Rôle: Build"
+              >🔧</button>
+              <button
+                className="btn"
+                style={roleBtnStyle(selected.poste === 'staff')}
+                onClick={() => setPoste('staff')}
+                title="Rôle: Staff"
+              >⭐</button>
+            </div>
+          </div>
+        )}
+
+        <div className="tools">
+          <button
+            className={`tool ${brush === 'dispo' ? 'tool--active' : ''}`}
+            onClick={() => setBrush('dispo')}
+            title="Marquer disponible"
+          >Disponible</button>
+          <button
+            className={`tool ${brush === 'none' ? 'tool--active' : ''}`}
+            onClick={() => setBrush('none')}
+            title="Marquer non disponible"
+          >Pas dispo</button>
+        </div>
+
+        {/* Bouton sauvegarde (💾 sur fond blanc) */}
+        <button onClick={onSave} disabled={loading || saving || !selectedEmail} className="btn" title="Enregistrer">
+          {saving ? '…' : '💾'}
+        </button>
+
+        {/* Légende à droite */}
+        <div className="ml-auto legend" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span><span className="legend-swatch" style={{ background: 'var(--role-ok-bg)' }}></span>Disponible</span>
+          <span><span className="legend-swatch chip-juge"></span>Juge (assigné)</span>
+          <span><span className="legend-swatch chip-build"></span>Build (assigné)</span>
+          <span><span className="legend-swatch chip-staff"></span>Staff</span>
+        </div>
+      </div>
+
+      {err && <div className="text-red-600">{err}</div>}
+      {msg && <div className="text-green-700">{msg}</div>}
+      {loading && <div>Chargement…</div>}
+
+      {!loading && selectedEmail && (
+        <div className="dispos-hz">
+          {DAYS.map(day => (
+            <div className="dispos-row" key={day}>
+              <div className="dispos-day">{day}</div>
+              <div className="dispos-scroller" onMouseLeave={() => setPainting(false)}>
+                <div className="dispos-line">
+                  {HOURS.map(hhmm => {
+                    const k = keyOf(day, hhmm)
+                    const v = map[k] === 'dispo' ? 'dispo' : 'none'
+                    const showHour = hhmm.endsWith(':00') // heure sur 1 pastille sur 2
+
+                    // overlay couleur si le bénévole est réellement assigné (juge/build) sur ce créneau
+                    const overlayClass =
+                      asJuge[k] ? 'as-juge'
+                      : asBuild[k] ? 'as-build'
+                      : '' // sinon couleur dispo/none
+
+                    return (
+                      <div
+                        key={k}
+                        className={`dispos-cell role-${v} ${overlayClass}`}
+                        onMouseDown={(e) => { e.preventDefault(); setPainting(true); toggleCell(day, hhmm, brush) }}
+                        onMouseUp={() => setPainting(false)}
+                        onMouseEnter={() => { if (painting) toggleCell(day, hhmm, brush) }}
+                        title={`${day} ${hhmm}`}
+                      >
+                        {showHour && <span className="hour-label">{hhmm}</span>}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+===== src/pages/Heats.tsx =====
+// src/pages/Heats.tsx
+import React from 'react'
+import { getHeats, saveHeats, repartir, type Heat, type Line } from '@/api/heats'
+import { useUserMap } from '@/hooks/useUsers'
+
+type EditField = 'equipe' | 'juge' | 'build' | 'day' | 'start' | 'wod' | 'heat'
+type EditTarget = { hIdx: number; cIdx?: number; field: EditField }
+
+export default function HeatsPage(){
+  const [heats, setHeats] = React.useState<Heat[]>([])
+  const [cols, setCols] = React.useState<number>(10)
+  const [loading, setLoading] = React.useState(true)
+  const [saving, setSaving] = React.useState(false)
+  const [error, setError] = React.useState<string|null>(null)
+  const [info, setInfo] = React.useState<string|null>(null)
+
+  const [newDay, setNewDay] = React.useState<'samedi'|'dimanche'>('samedi')
+  const [newTime, setNewTime] = React.useState<string>('09:00')
+  const [newWod, setNewWod] = React.useState<string>('WOD1')
+  const [newHeatNum, setNewHeatNum] = React.useState<number>(1)
+
+  const [editing, setEditing] = React.useState<EditTarget | null>(null)
+  const [editValue, setEditValue] = React.useState<string>('')
+
+  const { resolve } = useUserMap()
+  const short = (v?: string) => {
+    const e = (v||'').toLowerCase()
+    if (!e) return ''
+    return resolve(e, true) || v || ''
+  }
+
+  const computeCols = (arr: Heat[]) =>
+    Math.max(10, arr.reduce((m,h)=>Math.max(m, h.lignes?.length||0), 0))
+
+  const load = async ()=>{
+    setLoading(true); setError(null); setInfo(null)
+    try {
+      const h = await getHeats()
+      setHeats(h)
+      setCols(computeCols(h))
+      const lastHeat = h[h.length-1]?.heat ?? 0
+      setNewHeatNum((lastHeat || 0) + 1)
+      if (h.length>0) {
+        setNewDay((h[h.length-1].day as any) || 'samedi')
+        setNewWod(h[h.length-1].wod || 'WOD1')
+      }
+    } catch(e:any){
+      setError(e.message||'Erreur de chargement')
+    } finally { setLoading(false) }
+  }
+  React.useEffect(()=>{ void load() }, [])
+
+  const ensureCols = (n:number)=>{
+    setCols(n)
+    setHeats(v=>v.map(h=>{
+      const arr = [...(h.lignes||[])]
+      if (arr.length < n) for(let i=arr.length;i<n;i++) arr.push({equipe:'',juge:'',build:''})
+      else if (arr.length > n) arr.length = n
+      return { ...h, lignes: arr }
+    }))
+  }
+  const addHeatQuick = ()=>{
+    const lignes: Line[] = Array.from({length: cols}, ()=>({equipe:'',juge:'',build:''}))
+    const h: Heat = { day:newDay, start:newTime, wod:newWod, heat:newHeatNum, lignes }
+    setHeats(v=>[...v, h])
+    setNewHeatNum(n=>n+1)
+  }
+
+  const onSave = async ()=>{
+    setSaving(true); setError(null); setInfo(null)
+    try { await saveHeats(heats); setInfo('Enregistré ✅') }
+    catch(e:any){ setError(e.message||'Erreur à l’enregistrement') }
+    finally{ setSaving(false) }
+  }
+
+  const sanitizeUniquePerHeat = (arr: Heat[]): Heat[] => {
+    return arr.map(h=>{
+      const seen = new Set<string>()
+      const lignes = (h.lignes||[]).map((cell)=>{
+        const c = { ...cell }
+        const judgeKey = (c.juge||'').toLowerCase()
+        const buildKey = (c.build||'').toLowerCase()
+        if (judgeKey) {
+          const sig = `${judgeKey}|juge|${h.heat}`
+          if (seen.has(sig)) c.juge = '' ; else seen.add(sig)
+        }
+        if (buildKey) {
+          const sig = `${buildKey}|build|${h.heat}`
+          if (seen.has(sig)) c.build = '' ; else seen.add(sig)
+        }
+        return c
+      })
+      return { ...h, lignes }
+    })
+  }
+
+  const onRepartir = async ()=>{
+    setSaving(true); setError(null); setInfo(null)
+    try {
+      const fresh = await repartir()
+      setHeats(sanitizeUniquePerHeat(fresh))
+      setInfo(`Répartition OK ✅`)
+    } catch(e:any){
+      setError(e.message||'Erreur sur la répartition')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Edition inline
+  const teamLine = (txt?: string) => (txt && txt.trim() ? txt.trim() : '-')
+  const startEdit = (t: EditTarget, initial: string) => { setEditing(t); setEditValue(initial) }
+  const commitEdit = () => {
+    if (!editing) return
+    const { hIdx, cIdx, field } = editing
+    const v = editValue
+    setHeats(prev=>{
+      const copy = [...prev]
+      const h = { ...copy[hIdx] }
+      if (cIdx == null) {
+        if (field==='day')   { const vv=String(v).toLowerCase(); if (vv==='samedi'||vv==='dimanche') h.day=vv as any }
+        if (field==='start') h.start = String(v)
+        if (field==='wod')   h.wod   = String(v)
+        if (field==='heat')  { const n=Number(v); if (Number.isFinite(n)) h.heat=n }
+        copy[hIdx]=h; return copy
+      }
+      const lignes=[...(h.lignes||[])]; const cell={...(lignes[cIdx]||{equipe:'',juge:'',build:''})}
+      if (field==='equipe') cell.equipe=v
+      if (field==='juge')   cell.juge=v
+      if (field==='build')  cell.build=v
+      lignes[cIdx]=cell; h.lignes=lignes; copy[hIdx]=h; return copy
+    })
+    setEditing(null); setEditValue('')
+  }
+  const cancelEdit = ()=>{ setEditing(null); setEditValue('') }
+
+  const FieldHeader: React.FC<{hIdx:number; field:'day'|'start'|'wod'|'heat'; value:string|number}> =
+  ({hIdx,field,value})=>{
+    const isMe = editing && editing.hIdx===hIdx && editing.cIdx==null && editing.field===field
+    const baseId = `heat-${hIdx}-${field}`
+    if (isMe) {
+      const type = field==='heat' ? 'number' : (field==='start' ? 'time' : 'text')
+      return (
+        <input
+          id={baseId} name={baseId}
+          autoFocus type={type} className="input"
+          style={{minWidth: field==='wod' ? 80 : undefined}}
+          value={String(editValue)}
+          onChange={e=>setEditValue(e.target.value)}
+          onBlur={commitEdit}
+          onKeyDown={e=>{ if (e.key==='Enter') commitEdit(); if (e.key==='Escape') cancelEdit() }}
+        />
+      )
+    }
+    return (
+      <div className="cursor-text" onClick={()=>startEdit({hIdx,field,cIdx:undefined}, String(value))} title="Cliquer pour éditer">
+        {String(value)}
+      </div>
+    )
+  }
+
+  const FieldTeam: React.FC<{hIdx:number; cIdx:number; value:string}> = ({hIdx,cIdx,value})=>{
+    const isMe = editing && editing.hIdx===hIdx && editing.cIdx===cIdx && editing.field==='equipe'
+    const baseId = `heat-${hIdx}-col-${cIdx}-equipe`
+    if (isMe) {
+      return (
+        <input
+          id={baseId} name={baseId}
+          autoFocus type="text" className="input"
+          value={editValue}
+          onChange={e=>setEditValue(e.target.value)}
+          onBlur={commitEdit}
+          onKeyDown={e=>{ if (e.key==='Enter') commitEdit(); if (e.key==='Escape') cancelEdit() }}
+        />
+      )
+    }
+    return (
+      <div className="cursor-text" onClick={()=>startEdit({hIdx,cIdx,field:'equipe'}, value)} title="Cliquer pour éditer l'équipe">
+        {teamLine(value)}
+      </div>
+    )
+  }
+
+  const FieldRole: React.FC<{
+    hIdx:number; cIdx:number; field:'juge'|'build'; value:string; chipClass:string;
+  }> = ({hIdx,cIdx,field,value,chipClass})=>{
+    const isMe = editing && editing.hIdx===hIdx && editing.cIdx===cIdx && editing.field===field
+    const baseId = `heat-${hIdx}-col-${cIdx}-${field}`
+    if (isMe) {
+      return (
+        <input
+          id={baseId} name={baseId}
+          autoFocus type="text" className="input"
+          placeholder={`${field==='juge'?'Juge':'Build'} (email ou nom)`}
+          value={editValue}
+          onChange={e=>setEditValue(e.target.value)}
+          onBlur={commitEdit}
+          onKeyDown={e=>{ if (e.key==='Enter') commitEdit(); if (e.key==='Escape') cancelEdit() }}
+        />
+      )
+    }
+    const label = short(value) || '-'
+    return (
+      <div className="cursor-text" onClick={()=>startEdit({hIdx,cIdx,field}, value)} title={`Cliquer pour éditer ${field}`}>
+        {label !== '-' ? <span className={chipClass}>{label}</span> : <span>-</span>}
+      </div>
+    )
+  }
+
+  return (
+    <div className="pastel-card space-y-3 planning-dense">
+      <div className="flex items-center gap-2 flex-wrap">
+        <h1 className="text-xl font-semibold">Heats</h1>
+
+        {/* Ajout rapide (inchangé) */}
+        <div className="flex items-center gap-2" style={{padding:'6px 10px', border:'1px solid #e5e7eb', borderRadius:8, background:'#f9fafb'}}>
+          <label className="text-sm">Jour</label>
+          <select className="input" value={newDay} onChange={e=>setNewDay(e.target.value as any)}>
+            <option value="samedi">samedi</option>
+            <option value="dimanche">dimanche</option>
+          </select>
+          <label className="text-sm">Heure</label>
+          <input className="input" type="time" value={newTime} onChange={e=>setNewTime(e.target.value)} />
+          <label className="text-sm">WOD</label>
+          <input className="input" type="text" value={newWod} onChange={e=>setNewWod(e.target.value)} style={{width:90}} />
+          <label className="text-sm">#</label>
+          <input className="input" type="number" value={newHeatNum} onChange={e=>setNewHeatNum(Number(e.target.value)||1)} style={{width:72}} />
+          <button className="btn" onClick={addHeatQuick} title="Ajouter un heat">+ Ajouter</button>
+        </div>
+
+        <span className="badge">Heats: {heats.length}</span>
+        <span className="badge">Colonnes: {cols}</span>
+
+        {/* Actions globales */}
+        <button onClick={()=>load()} disabled={loading||saving} className="btn" title="Rafraîchir">🔄</button>
+        <button onClick={onRepartir} disabled={loading||saving} className="btn" title="Répartir">Répartir</button>
+        <button onClick={()=>ensureCols(cols+1)} disabled={saving} className="btn" title="Ajouter une colonne">+ Col</button>
+        <button onClick={()=>ensureCols(Math.max(1,cols-1))} disabled={saving} className="btn" title="Retirer une colonne">– Col</button>
+
+        {/* Reset rôles */}
+        <button
+          onClick={async ()=>{
+            try{
+              setSaving(true); setError(null); setInfo(null)
+              await fetch('/la-hache-contest/api/reset_roles.php', { method:'POST', credentials:'include', cache:'no-store' })
+              const fresh = await getHeats()
+              setHeats(fresh)
+              setInfo('Rôles vidés 🧽')
+            }catch(e:any){
+              setError(e?.message || 'Erreur reset rôles')
+            }finally{ setSaving(false) }
+          }}
+          className="btn"
+          title="Vider juges/build de tous les heats"
+        >🧽</button>
+
+        <button onClick={onSave} disabled={loading||saving} className="btn" aria-label="Enregistrer" title="Enregistrer">💾</button>
+
+        {/* Légende */}
+        <div className="ml-auto legend" style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <span><span className="legend-swatch chip-juge"></span>Juge</span>
+          <span><span className="legend-swatch chip-build"></span>Build</span>
+          <span><span className="legend-swatch" style={{background:'#fee2e2', border:'2px solid #ef4444'}}></span>Équipe sans rôle(s)</span>
+        </div>
+      </div>
+
+      {error && <div className="text-red-600">{error}</div>}
+      {info && <div className="text-green-700">{info}</div>}
+      {loading && <div>Chargement…</div>}
+
+      {!loading && (
+        <div className="overflow-auto">
+          <table className="table text-sm" style={{minWidth: 900}}>
+            <thead>
+              <tr className="text-left">
+                <th>Jour</th>
+                <th>Heure</th>
+                <th>WOD</th>
+                <th>#</th>
+                {Array.from({length: cols}).map((_,i)=><th key={i}>Lane {i+1}</th>)}
+                <th style={{width:48}}></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {heats.length===0 ? (
+                <tr>
+                  <td colSpan={4+cols+1} className="text-neutral-600">Aucun heat. Clique “+ Ajouter”.</td>
+                </tr>
+              ) : (
+                heats.map((h, idx)=>(
+                  <tr key={idx}>
+                    <td><FieldHeader hIdx={idx} field="day"   value={h.day} /></td>
+                    <td><FieldHeader hIdx={idx} field="start" value={h.start} /></td>
+                    <td><FieldHeader hIdx={idx} field="wod"   value={h.wod} /></td>
+                    <td><FieldHeader hIdx={idx} field="heat"  value={h.heat} /></td>
+
+                    {Array.from({length: cols}).map((_,cIdx)=>{
+                      const cell = h.lignes[cIdx] || {equipe:'',juge:'',build:''}
+                      const hasTeam = !!(cell.equipe && cell.equipe.trim())
+                      const missingRole = hasTeam && !(cell.juge && cell.juge.trim()) || !(cell.build && cell.build.trim())
+                      const extraClass = hasTeam && ( !(cell.juge?.trim()) || !(cell.build?.trim()) ) ? 'slot--incomplete' : ''
+                      return (
+                        <td key={cIdx}>
+                          <div className={['slot-card','cell-compact', extraClass].join(' ').trim()}>
+                            <div className="line-compact" style={{marginBottom:2}}>
+                              <FieldTeam hIdx={idx} cIdx={cIdx} value={cell.equipe} />
+                            </div>
+                            <div className="line-compact" style={{marginBottom:2}}>
+                              <FieldRole hIdx={idx} cIdx={cIdx} field="juge"  value={cell.juge}  chipClass="chip chip-juge" />
+                            </div>
+                            <div className="line-compact">
+                              <FieldRole hIdx={idx} cIdx={cIdx} field="build" value={cell.build} chipClass="chip chip-build" />
+                            </div>
+                          </div>
+                        </td>
+                      )
+                    })}
+
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {/* Répartir ce heat uniquement (garde les autres colonnes comme avant) */}
+                        <button
+                          onClick={async ()=>{
+                            try{
+                              setSaving(true); setError(null); setInfo(null)
+                              const hh = heats[idx]
+                              await fetch('/la-hache-contest/api/repartir_one.php', {
+                                method: 'POST',
+                                credentials: 'include',
+                                cache: 'no-store',
+                                headers: { 'Content-Type':'application/json', 'Cache-Control':'no-store' },
+                                body: JSON.stringify({ day: hh.day, start: hh.start, wod: hh.wod, heat: hh.heat })
+                              })
+                              const fresh = await getHeats()
+                              setHeats(sanitizeUniquePerHeat(fresh))
+                              setInfo(`Répartition du heat #${hh.heat} OK ✅`)
+                            }catch(e:any){
+                              setError(e?.message || 'Erreur sur la répartition du heat')
+                            }finally{
+                              setSaving(false)
+                            }
+                          }}
+                          className="btn"
+                          aria-label="Répartir uniquement ce heat"
+                          title="Répartir uniquement ce heat"
+                          style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:32, height:32 }}
+                        >
+                          🚧
+                        </button>
+
+                        <button
+                          onClick={()=> setHeats(v=>v.filter((_,i)=>i!==idx))}
+                          className="btn btn--danger"
+                          aria-label="Supprimer ce heat"
+                          title="Supprimer ce heat"
+                          style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:32, height:32 }}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+===== src/pages/Login.tsx =====
+import React from 'react'
+import { login } from '@/api/auth'
+import { useNavigate } from 'react-router-dom'
+
+export default function Login(){
+  const nav = useNavigate()
+  const [email, setEmail] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [error, setError] = React.useState<string| null>(null)
+  const [loading, setLoading] = React.useState(false)
+
+  const submit = async (e: React.FormEvent)=>{
+    e.preventDefault()
+    setLoading(true); setError(null)
+    try{
+      await login(email, password)
+      // IMPORTANT: reload pour que App/useMe relise /me.php avec la session fraîche
+      window.location.href = '/la-hache-contest/'
+    }catch{
+      setError('Identifiants invalides')
+    }finally{
+      setLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="pastel-card max-w-md mx-auto">
+      <h1 className="text-xl font-semibold mb-3">Connexion</h1>
+      <label className="block mb-2">Email
+        <input className="w-full border rounded p-2" value={email} onChange={e=>setEmail(e.target.value)} />
+      </label>
+      <label className="block mb-2">Mot de passe
+        <input type="password" className="w-full border rounded p-2" value={password} onChange={e=>setPassword(e.target.value)} />
+      </label>
+      {error && <div className="text-red-600 mb-2">{error}</div>}
+      <button disabled={loading} className="px-3 py-1 rounded bg-neutral-200">{loading?'Connexion…':'Se connecter'}</button>
+      <div className="mt-3 text-sm">
+        Pas de compte ? <a className="underline" onClick={(e)=>{e.preventDefault(); nav('/register')}} href="/register">Créer un compte</a>
+      </div>
+    </form>
+  )
+}
+
+===== src/pages/MesDispos.tsx =====
+// src/pages/MesDispos.tsx
+import React from 'react'
+import { useMe } from '@/api/auth'
+import { loadAvail, saveAvail, type AvailMap, type AvailWriteMap } from '@/api/avail'
+import { getHeats, type Heat } from '@/api/heats'
+
+const DAYS: Array<'samedi'|'dimanche'> = ['samedi','dimanche']
+const HOURS = [
+  '07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30',
+  '11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30',
+  '15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30',
+  '19:00','19:30','20:00'
+]
+const keyOf = (day:string, hhmm:string)=> `${day} ${hhmm}`
+
+const H_MAX = 20
+const isAllowedKey = (key:string)=>{
+  const m=/^(samedi|dimanche)\s+([0-2]\d):([0-5]\d)$/.exec(key.toLowerCase().trim()); if(!m) return false
+  const h=+m[2], mi=+m[3]; if(!(mi===0||mi===30)) return false
+  if (h<H_MAX) return true; if (h===H_MAX && mi===0) return true; return false
+}
+
+type Brush = 'none'|'dispo'
+
+export default function MesDispos(){
+  const { me } = useMe()
+  const email = (me?.email||'').toLowerCase()
+
+  const [map, setMap] = React.useState<AvailMap>({})
+  const [overlay, setOverlay] = React.useState<Record<string,'juge'|'build'|'none'>>({})
+  const [brush, setBrush] = React.useState<Brush>('dispo')
+  const [painting, setPainting] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
+  const [saving, setSaving] = React.useState(false)
+  const [msg, setMsg] = React.useState<string|null>(null)
+  const [err, setErr] = React.useState<string|null>(null)
+
+  const buildOverlay = (heats: Heat[])=>{
+    const o: Record<string,'juge'|'build'|'none'> = {}
+    for (const h of heats){
+      const k = `${(h.day||'').toLowerCase()} ${h.start}`
+      for (const ln of (h.lignes||[])){
+        if ((ln.juge||'').toLowerCase()===email) o[k]='juge'
+        if ((ln.build||'').toLowerCase()===email) o[k]='build'
+      }
+    }
+    setOverlay(o)
+  }
+
+  React.useEffect(()=>{
+    (async()=>{
+      setLoading(true); setErr(null); setMsg(null)
+      try {
+        const m = await loadAvail() // moi
+        setMap(m)
+        const h = await getHeats()
+        buildOverlay(h)
+      } catch(e:any){
+        setErr(e?.message||'Erreur de chargement')
+      } finally { setLoading(false) }
+    })()
+  }, [email])
+
+  const toggleCell = (day:'samedi'|'dimanche', hhmm:string, value?:Brush)=>{
+    const k = keyOf(day,hhmm)
+    setMap(prev=>{
+      const v:Brush = value ?? (prev[k]==='dispo'?'none':'dispo')
+      return { ...prev, [k]: v }
+    })
+  }
+
+  const onSave = async ()=>{
+    setSaving(true); setErr(null); setMsg(null)
+    try{
+      const out: AvailWriteMap = {}
+      Object.entries(map).forEach(([k,v])=>{
+        if (v==='dispo' && isAllowedKey(k)) out[k]='dispo'
+      })
+      await saveAvail(out, email)
+      setMsg('Disponibilités enregistrées ✅')
+    }catch(e:any){ setErr(e?.message||'Erreur à l’enregistrement') }
+    finally{ setSaving(false) }
+  }
+
+  const cls = (k:string)=>{
+    const base = map[k]==='dispo' ? 'role-dispo' : 'role-none'
+    const ov = overlay[k]
+    const as = ov==='juge' ? 'as-juge' : ov==='build' ? 'as-build' : ''
+    return `dispos-cell ${base} ${as}`
+  }
+  const labelIfFullHour = (hhmm:string)=> (hhmm.endsWith(':00')? hhmm : '')
+
+  return (
+    <div className="pastel-card space-y-3">
+      <div className="flex items-center gap-2">
+        <h1 className="text-xl font-semibold">Mes disponibilités</h1>
+        <div className="tools">
+          <button className={`tool ${brush==='dispo'?'tool--active':''}`} onClick={()=>setBrush('dispo')}>Disponible</button>
+          <button className={`tool ${brush==='none'?'tool--active':''}`} onClick={()=>setBrush('none')}>Pas dispo</button>
+        </div>
+        <button onClick={onSave} disabled={loading||saving} className="btn">
+          {saving? 'Enregistrement…' : '💾'}
+        </button>
+
+        <div className="ml-auto legend" style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <span><span className="legend-swatch" style={{ background:'var(--role-ok-bg)' }}></span>Disponible</span>
+          <span><span className="legend-swatch chip-juge"></span>Juge (assigné)</span>
+          <span><span className="legend-swatch chip-build"></span>Build (assigné)</span>
+        </div>
+      </div>
+
+      {loading && <div>Chargement…</div>}
+      {err && <div className="text-red-600">{err}</div>}
+      {!loading && (
+        <div className="dispos-hz">
+          {DAYS.map(day=>(
+            <div className="dispos-row" key={day}>
+              <div className="dispos-day">{day}</div>
+              <div className="dispos-scroller" onMouseLeave={()=>setPainting(false)}>
+                <div className="dispos-line">
+                  {HOURS.map(hhmm=>{
+                    const k=keyOf(day,hhmm)
+                    return (
+                      <div
+                        key={k}
+                        className={cls(k)}
+                        onMouseDown={(e)=>{e.preventDefault(); setPainting(true); toggleCell(day,hhmm,brush)}}
+                        onMouseUp={()=>setPainting(false)}
+                        onMouseEnter={()=>{ if(painting) toggleCell(day,hhmm,brush) }}
+                        title={k}
+                      >
+                        <span className="hour-label">{labelIfFullHour(hhmm)}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+===== src/pages/Planning.tsx =====
+// src/pages/Planning.tsx
+import React from 'react'
+import { getHeats, type Heat } from '@/api/heats'
+import { useUserMap } from '@/hooks/useUsers'
+import { useMe } from '@/api/auth'
+
+function wodNum(w: string){ const m=/(\d+)/.exec(w||''); return m?parseInt(m[1],10):0 }
+function byWodHeat(a:Heat,b:Heat){ const wa=wodNum(a.wod), wb=wodNum(b.wod); return wa!==wb? wa-wb : (a.heat||0)-(b.heat||0) }
+function groupByWod(heats: Heat[]){
+  const m = new Map<string, Heat[]>()
+  for (const h of heats){
+    const key = h.wod || 'WOD ?'
+    if (!m.has(key)) m.set(key, [])
+    m.get(key)!.push(h)
+  }
+  for (const [, arr] of m) arr.sort(byWodHeat)
+  return Array.from(m.entries()).sort((a,b)=> wodNum(a[0]) - wodNum(b[0]))
+}
+function maxLanes(heats: Heat[]){
+  let n=0; for (const h of heats) n=Math.max(n, h.lignes?.length||0); return n
+}
+
+export default function Planning(){
+  const [heats, setHeats] = React.useState<Heat[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string|null>(null)
+
+  const { resolve, users } = useUserMap()
+  const { me } = useMe()
+  const meEmail = (me?.email||'').toLowerCase()
+  const [selectedEmail, setSelectedEmail] = React.useState<string>(meEmail)
+
+  React.useEffect(()=>{
+    (async()=>{
+      setLoading(true); setError(null)
+      try{
+        const arr = await getHeats()
+        setHeats(arr)
+      }catch(e:any){
+        setError(e?.message||'Erreur de chargement')
+      }finally{ setLoading(false) }
+    })()
+  }, [])
+
+  React.useEffect(()=>{ if(meEmail) setSelectedEmail(meEmail) }, [meEmail])
+
+  const allEmails = React.useMemo(()=>{
+    const s = new Set<string>()
+    users.forEach(u=>{ if(u.email) s.add(u.email.toLowerCase()) })
+    return Array.from(s).sort((a,b)=> resolve(a,true).localeCompare(resolve(b,true)))
+  }, [users, resolve])
+
+  const groups = groupByWod(heats)
+  const lanes = maxLanes(heats)
+  const email = (selectedEmail||'').toLowerCase()
+
+  const chipBg = (isJ:boolean, isB:boolean) =>
+    isJ ? { background: 'var(--role-juge-bg)', color:'var(--role-juge-fg)' }
+        : isB ? { background: 'var(--role-build-bg)', color:'var(--role-build-fg)' }
+               : undefined
+
+  const short = (v?: string) => {
+    const e = (v||'').toLowerCase()
+    if (!e) return ''
+    return resolve(e, true) || v || ''
+  }
+
+  // --- Navigation 🔼 / 🔽 entre bénévoles (wrap-around) ---
+  const gotoPrev = () => {
+    if (!allEmails.length) return
+    const idx = Math.max(0, allEmails.indexOf(email))
+    const prev = (idx - 1 + allEmails.length) % allEmails.length
+    setSelectedEmail(allEmails[prev])
+  }
+  const gotoNext = () => {
+    if (!allEmails.length) return
+    const idx = Math.max(0, allEmails.indexOf(email))
+    const next = (idx + 1) % allEmails.length
+    setSelectedEmail(allEmails[next])
+  }
+
+  return (
+    <div className="pastel-card space-y-3 planning-dense">
+      <div className="flex items-center gap-2">
+        <h1 className="text-xl font-semibold">Planning</h1>
+        <select
+          className="input"
+          value={selectedEmail}
+          onChange={e=> setSelectedEmail((e.target.value||'').toLowerCase())}
+          style={{ minWidth: 260 }}
+          title="Choisir un bénévole"
+        >
+          {allEmails.map(e=>(
+            <option key={e} value={e}>{resolve(e,true)} {e===meEmail?'(moi)':''}</option>
+          ))}
+        </select>
+
+        {/* 🔼 / 🔽 navigation bénévoles */}
+        <button className="btn" onClick={gotoPrev} title="Bénévole précédent">🔼</button>
+        <button className="btn" onClick={gotoNext} title="Bénévole suivant">🔽</button>
+
+        {/* Légende à droite */}
+        <div className="ml-auto legend" style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <span><span className="legend-swatch" style={{background:'var(--role-juge-bg)'}}></span>Juge</span>
+          <span><span className="legend-swatch" style={{background:'var(--role-build-bg)'}}></span>Build</span>
+        </div>
+      </div>
+
+      {loading && <div>Chargement…</div>}
+      {error && <div className="text-red-600">{error}</div>}
+
+      {!loading && !error && groups.map(([wod, arr])=>(
+        <div key={wod} className="pastel-card">
+          <h2 className="text-xl font-semibold mb-2">{wod}</h2>
+          <table className="table text-sm" style={{minWidth: 900}}>
+            <thead>
+              <tr className="text-left">
+                <th style={{width:80}}>Jour</th>
+                <th style={{width:60}}>Heure</th>
+                <th style={{width:40}}>#</th>
+                {Array.from({length:lanes}, (_,i)=><th key={i}>Lane {i+1}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {arr.map(h=>(
+                <tr key={`${h.wod}-${h.heat}-${h.day}-${h.start}`}>
+                  <td>{h.day}</td>
+                  <td>{h.start}</td>
+                  <td>{h.heat}</td>
+                  {Array.from({length:lanes}, (_,lane)=>{
+                    const ln = h.lignes[lane]
+                    if (!ln) return <td key={lane}></td>
+                    const isJ = (ln.juge||'').toLowerCase()===email
+                    const isB = (ln.build||'').toLowerCase()===email
+                    const bgStyle = chipBg(isJ, isB)
+                    return (
+                      <td key={lane}>
+                        <div className="slot-card cell-compact" style={bgStyle}>
+                          <div className="line-compact" style={{marginBottom:2}}>
+                            {ln.equipe ? <span className="chip">{ln.equipe}</span> : <span className="chip">—</span>}
+                          </div>
+                          <div className="line-compact" style={{marginBottom:2}}>
+                            {ln.juge ? <span className="chip chip-juge">{short(ln.juge)}</span> : <span className="chip">—</span>}
+                          </div>
+                          <div className="line-compact">
+                            {ln.build ? <span className="chip chip-build">{short(ln.build)}</span> : <span className="chip">—</span>}
+                          </div>
+                        </div>
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+===== src/pages/Register.tsx =====
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useMe, useAuthActions } from '@/api/auth'
+
+export default function Register(){
+  const nav = useNavigate()
+  const { doRegister } = useAuthActions()
+  const [first, setFirst] = React.useState('')
+  const [last, setLast] = React.useState('')
+  const [email, setEmail] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [optin, setOptin] = React.useState(false)
+  const [err, setErr] = React.useState<string|null>(null)
+
+  const submit = async (e:React.FormEvent)=>{
+    e.preventDefault()
+    setErr(null)
+    if (!first.trim() || !last.trim() || !email.trim() || !password || !optin) {
+      setErr('Veuillez remplir Prénom, Nom, Email, Mot de passe et accepter la protection des données.')
+      return
+    }
+    const res = await doRegister({ first_name:first.trim(), last_name:last.trim(), email: email.trim().toLowerCase(), password, optin: true } as any)
+    if (!res.ok) { setErr('Inscription impossible'); return }
+    nav('/', { replace:true })
+  }
+
+  return (
+    <div className="pastel-card" style={{maxWidth:460, margin:'40px auto'}}>
+      <h1 className="text-xl font-semibold mb-3">Créer un compte</h1>
+      {err && <div className="text-red-600 mb-2">{err}</div>}
+      <form onSubmit={submit} className="space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="text-sm">Prénom *</label>
+            <input className="input" value={first} onChange={e=>setFirst(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-sm">Nom *</label>
+            <input className="input" value={last} onChange={e=>setLast(e.target.value)} />
+          </div>
+        </div>
+        <div>
+          <label className="text-sm">Email *</label>
+          <input className="input" value={email} onChange={e=>setEmail(e.target.value)} />
+        </div>
+        <div>
+          <label className="text-sm">Mot de passe *</label>
+          <input className="input" type="password" value={password} onChange={e=>setPassword(e.target.value)} />
+        </div>
+        <label className="flex items-start gap-2 text-sm">
+          <input type="checkbox" checked={optin} onChange={e=>setOptin(e.target.checked)} />
+          <span>J’accepte la protection des données (opt-in) *</span>
+        </label>
+        <button className="btn btn--primary" type="submit">Créer mon compte</button>
+      </form>
+    </div>
+  )
+}
+
+===== src/pages/Stats.tsx =====
+// src/pages/Stats.tsx
+import React from 'react'
+import { loadAvail } from '@/api/avail'
+import { useUsers } from '@/hooks/useUsers'
+
+const HOURS = [
+  '07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30',
+  '11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30',
+  '15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30',
+  '19:00','19:30','20:00'
+]
+type Day = 'samedi' | 'dimanche'
+
+type Bucket = { juge:number; build:number; staff:number }
+function emptyBuckets(): Record<string, Bucket> {
+  const m: Record<string, Bucket> = {}
+  for (const h of HOURS) m[h] = { juge:0, build:0, staff:0 }
+  return m
+}
+
+function normPoste(p?: string): 'juge'|'build'|'staff'|'' {
+  const s = (p||'').toLowerCase().trim()
+  if (!s) return ''
+  if (s.startsWith('j')) return 'juge'
+  if (s.startsWith('b')) return 'build'
+  if (s === 'staff')     return 'staff'
+  if (s === 'juge' || s === 'build') return s as any
+  return ''
+}
+
+export default function Stats(){
+  const { users } = useUsers()
+  const [selectedDay, setSelectedDay] = React.useState<Day>('samedi')
+
+  const [buckets, setBuckets] = React.useState<Record<string, Bucket>>(emptyBuckets())
+  const [loading, setLoading] = React.useState(true)
+  const [err, setErr] = React.useState<string|null>(null)
+
+  React.useEffect(()=>{
+    (async()=>{
+      setLoading(true); setErr(null)
+      try {
+        const roleByEmail: Record<string,'juge'|'build'|'staff'|''> = {}
+        for (const u of users) {
+          const email = (u.email||'').toLowerCase()
+          roleByEmail[email] = normPoste((u as any).poste)
+        }
+
+        const b = emptyBuckets()
+        await Promise.all(users.map(async (u)=>{
+          const email = (u.email||'').toLowerCase()
+          if (!email) return
+          const role = roleByEmail[email]
+          if (!role) return
+          const avail = await loadAvail(email)
+          for (const hhmm of HOURS) {
+            const key = `${selectedDay} ${hhmm}`
+            if ((avail[key]||'') === 'dispo') {
+              if (!b[hhmm]) b[hhmm] = { juge:0, build:0, staff:0 }
+              b[hhmm][role] += 1
+            }
+          }
+        }))
+
+        setBuckets(b)
+      } catch(e:any){
+        setErr(e?.message || 'Erreur chargement stats')
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [users, selectedDay])
+
+  const maxVal = React.useMemo(()=>{
+    let m = 0
+    Object.values(buckets).forEach(v=>{
+      m = Math.max(m, v.juge, v.build, v.staff)
+    })
+    return Math.max(m, 1)
+  }, [buckets])
+
+  return (
+    <div className="pastel-card">
+      <div className="flex items-center gap-2 mb-2">
+        <h1 className="text-xl font-semibold">Stats — Disponibilités déclarées</h1>
+
+        <div className="tools" style={{marginLeft:8}}>
+          <button
+            className={`tool ${selectedDay==='samedi' ? 'tool--active' : ''}`}
+            onClick={()=>setSelectedDay('samedi')}
+            title="Voir samedi"
+          >samedi</button>
+          <button
+            className={`tool ${selectedDay==='dimanche' ? 'tool--active' : ''}`}
+            onClick={()=>setSelectedDay('dimanche')}
+            title="Voir dimanche"
+          >dimanche</button>
+        </div>
+
+        <div className="ml-auto legend">
+          <span><span className="dot dot-juge"></span>Juges</span>
+          <span><span className="dot dot-build"></span>Build</span>
+          <span><span className="dot dot-staff"></span>Staff</span>
+        </div>
+      </div>
+
+      {loading && <div>Chargement…</div>}
+      {err && <div className="text-red-600">{err}</div>}
+
+      {!loading && !err && (
+        <div className="stats-bars">
+          {HOURS.map((hhmm)=>{
+            const v = buckets[hhmm] || {juge:0,build:0,staff:0}
+            const hJ = Math.round((v.juge  / maxVal) * 100)
+            const hB = Math.round((v.build / maxVal) * 100)
+            const hS = Math.round((v.staff / maxVal) * 100)
+            return (
+              <div key={hhmm} className="bar-group">
+                <div className="bar bar-juge"  style={{height:`${hJ}%`}} title={`${selectedDay} ${hhmm} · juges dispo: ${v.juge}`}>
+                  <span className="bar-tip">{v.juge}</span>
+                </div>
+                <div className="bar bar-build" style={{height:`${hB}%`}} title={`${selectedDay} ${hhmm} · build dispo: ${v.build}`}>
+                  <span className="bar-tip">{v.build}</span>
+                </div>
+                <div className="bar bar-staff" style={{height:`${hS}%`}} title={`${selectedDay} ${hhmm} · staff dispo: ${v.staff}`}>
+                  <span className="bar-tip">{v.staff}</span>
+                </div>
+                <div className="bar-label">{hhmm}</div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+===== src/pages/Teams.tsx =====
+// src/pages/Teams.tsx
+import React from 'react'
+import { useMe } from '@/api/auth'
+import { getHeats } from '@/api/heats'
+import { loadTeams, saveTeams, type Team } from '@/api/teams'
+
+type Cat = ''|'Régular'|'Inter'|'RX'
+type HeatLine = { equipe?: string; juge?: string; build?: string }
+type Heat = { wod: string; heat: number; start: string; lignes: HeatLine[] }
+
+const CAT_ORDER: Cat[] = ['', 'Régular','Inter','RX']
+
+export default function TeamsPage(){
+  const { me } = useMe()
+  const isAdmin = me?.role === 'admin'
+
+  const [teams, setTeams] = React.useState<Team[]>([])
+  const [heats, setHeats] = React.useState<Heat[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [saving, setSaving] = React.useState(false)
+  const [msg, setMsg] = React.useState<string|null>(null)
+  const [err, setErr] = React.useState<string|null>(null)
+
+  React.useEffect(()=>{(async()=>{
+    setLoading(true); setErr(null)
+    try{
+      const [t, hRaw] = await Promise.all([
+        loadTeams(),
+        getHeats().then((r:any)=> Array.isArray(r)? r : (r?.heats || []))
+      ])
+      setTeams(t)
+      const norm = (x:any):Heat => ({
+        wod: String(x?.wod ?? ''),
+        heat: Number(x?.heat ?? x?.numero ?? 0),
+        start: String(x?.start ?? x?.heure ?? ''),
+        lignes: Array.isArray(x?.lignes) ? x.lignes : []
+      })
+      setHeats((hRaw||[]).map(norm))
+    }catch(e:any){ setErr(e?.message||'Erreur de chargement') }
+    finally{ setLoading(false) }
+  })()},[])
+
+  const wods = React.useMemo(()=>{
+    const s = new Set(heats.map(h=> String(h.wod)))
+    return Array.from(s).sort((a,b)=> a.localeCompare(b))
+  },[heats])
+
+  const setTeamById = (id:string, patch: Partial<Team>)=>{
+    setTeams(ts => ts.map((t)=> t.id === id ? {...t, ...patch} : t))
+  }
+  const addTeam = ()=>{ if (isAdmin) setTeams(ts => [...ts, { id: crypto.randomUUID(), name:'Nouvelle équipe', cat: '' }]) }
+  const removeTeam = (id:string)=>{ if (isAdmin) setTeams(ts => ts.filter(t=> t.id !== id)) }
+
+  const saveAdmin = async ()=>{
+    if (!isAdmin) return
+    setSaving(true); setMsg(null); setErr(null)
+    try{ await saveTeams(teams); setMsg('💾 Équipes enregistrées') }
+    catch(e:any){ setErr(e?.message||'Erreur sauvegarde') }
+    finally{ setSaving(false) }
+  }
+
+  const repartirTeams = async ()=>{
+    if (!isAdmin) return
+    setSaving(true); setMsg(null); setErr(null)
+    try{
+      const res = await fetch('/la-hache-contest/api/repartir_team.php', {
+        method: 'POST',
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-store' }
+      })
+      const data = await res.json()
+      const raw = Array.isArray(data) ? data : (data?.heats || [])
+      if (!Array.isArray(raw)) throw new Error('répartition: réponse invalide')
+      const norm = (x:any):Heat => ({
+        wod: String(x?.wod ?? ''),
+        heat: Number(x?.heat ?? x?.numero ?? 0),
+        start: String(x?.start ?? x?.heure ?? ''),
+        lignes: Array.isArray(x?.lignes) ? x.lignes : []
+      })
+      setHeats(raw.map(norm))
+      setMsg('✅ Répartition équipes OK')
+    }catch(e:any){
+      setErr(e?.message || 'Erreur répartition équipes')
+    }finally{
+      setSaving(false)
+    }
+  }
+
+  function findSlotFor(teamName:string, wod:string){
+    for(const h of heats) if(String(h.wod)===wod){
+      const i = (h.lignes||[]).findIndex(l => (l.equipe||'').trim()===teamName)
+      if(i>=0) return { heat:h.heat, time:h.start, line:i+1 }
+    }
+    return null
+  }
+
+  const sorted = React.useMemo(()=>{
+    return teams.slice().sort((a,b)=>
+      CAT_ORDER.indexOf(a.cat as Cat) - CAT_ORDER.indexOf(b.cat as Cat) ||
+      a.name.localeCompare(b.name)
+    )
+  }, [teams])
+
+  // Cartouche resserrée: largeur 8–9 caractères, padding symétrique
+  const Cartouche: React.FC<{heat:number; time:string; line:number}> = ({heat,time,line}) => {
+    return (
+      <div
+        className="rounded border border-neutral-300"
+        style={{
+          display:'inline-flex',
+          flexDirection:'column',
+          gap:2,
+          padding: '3px 8px',
+          minWidth: '8ch',   // “Ligne 10” tient
+          maxWidth: '9ch',
+          width: 'fit-content',
+          lineHeight: 1.15
+        }}
+      >
+        <div className="font-semibold">Heat {heat}</div>
+        <div className="text-sm text-neutral-700">{time}</div>
+        <div className="text-sm">Ligne {line}</div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="pastel-card space-y-3">
+      <div className="flex items-center gap-2">
+        <h1 className="text-xl font-semibold">Teams</h1>
+        {isAdmin && (
+          <>
+            <button className="btn" onClick={addTeam}>➕ Ajouter</button>
+            <button className="btn" onClick={saveAdmin} disabled={saving}>💾</button>
+            <button className="btn" onClick={repartirTeams} disabled={saving}>Répartir</button>
+            {msg && <span className="text-sm text-green-700">{msg}</span>}
+            {err && <span className="text-sm text-red-600">{err}</span>}
+          </>
+        )}
+      </div>
+
+      {loading ? <div>Chargement…</div> : (
+        <div className="overflow-auto">
+          <table className="table text-sm" style={{minWidth: 900}}>
+            <thead>
+              <tr className="text-left">
+                <th>Nom</th>
+                <th>Catégorie</th>
+                {wods.map(w => <th key={w}>{w}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((t)=>(
+                <tr key={t.id}>
+                  <td>
+                    {isAdmin
+                      ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            className="input"
+                            style={{width:180}}
+                            value={t.name}
+                            onChange={e=>setTeamById(t.id, {name:e.target.value})}
+                          />
+                          <button className="btn" title="Supprimer" onClick={()=>removeTeam(t.id)}>🗑️</button>
+                        </div>
+                      )
+                      : t.name}
+                  </td>
+                  <td>
+                    {isAdmin
+                      ? (
+                        <select
+                          className="input"
+                          value={t.cat}
+                          onChange={e=>setTeamById(t.id, {cat: e.target.value as Cat})}
+                          style={{width:140}}
+                        >
+                          <option value="">—</option>
+                          <option value="Régular">Régular</option>
+                          <option value="Inter">Inter</option>
+                          <option value="RX">RX</option>
+                        </select>
+                      ) : (t.cat || '—')}
+                  </td>
+                  {wods.map(w=>{
+                    const slot = findSlotFor(t.name, w)
+                    return (
+                      <td key={w}>
+                        {slot
+                          ? <Cartouche heat={slot.heat} time={slot.time} line={slot.line} />
+                          : <span className="text-neutral-500">—</span>
+                        }
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+              {sorted.length === 0 && (
+                <tr><td colSpan={2 + wods.length} className="text-neutral-500">Aucune équipe.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+===== src/styles.css =====
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --pastel-green: #a7f3d0;
+  --pastel-red: #fecaca;
+  --pastel-blue: #bfdbfe;
+  --pastel-brown: #d6bfa6;
+}
+
+.pastel-card { @apply rounded-2xl shadow-sm p-4 bg-white; }
+===== src/utils/time.ts =====
+// src/utils/time.ts
+// Créneaux de 07:00 à 20:00 (inclus) toutes les 30 minutes.
+const START_H = 7
+const END_H   = 20
+const STEP_MIN = 30
+
+function pad(n: number): string { return n < 10 ? '0'+n : ''+n }
+
+export const SLOTS: string[] = (() => {
+  const arr: string[] = []
+  for (let h = START_H; h <= END_H; h++) {
+    for (let m = 0; m < 60; m += STEP_MIN) {
+      if (h === END_H && m > 0) break // ne pas dépasser 20:00
+      arr.push(`${pad(h)}:${pad(m)}`)
+    }
+  }
+  return arr
+})()
+
+===== tsconfig.json =====
+{
+  "extends": "./tsconfig.paths.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true
+  },
+  "include": ["src"]
+}
+===== tsconfig.paths.json =====
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+===== vite.config.ts =====
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+export default defineConfig({
+  base: '/la-hache-contest/',
+  plugins: [react()],
+  resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
+})

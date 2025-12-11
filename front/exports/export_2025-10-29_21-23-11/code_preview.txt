@@ -1,0 +1,945 @@
+===== export_full_dump.sh =====
+#!/usr/bin/env bash
+# Export project structure and source code into timestamped text files.
+# Usage:
+#   1) Place this script at the ROOT of your project.
+#   2) Run:   bash export_full_dump.sh
+#   3) Results will be in ./exports/export_YYYY-MM-DD_HH-MM-SS/
+#
+# Works on macOS and Linux. Requires only POSIX tools.
+# Optional: 'tree' and 'gzip' if available (falls back gracefully).
+
+set -euo pipefail
+
+# ------------ Config (edit if needed) ------------
+# Directories to exclude (add/remove as you like)
+EXCLUDES=(
+  ".git"
+  "node_modules"
+  "dist"
+  "build"
+  ".next"
+  ".cache"
+  "coverage"
+  ".turbo"
+  ".parcel-cache"
+  ".vite"
+  ".idea"
+  ".vscode"
+  ".DS_Store"
+)
+
+# File extensions to include in the code dump (case-insensitive)
+EXTENSIONS=(
+  "js" "jsx" "ts" "tsx" "php" "json" "css" "html" "md"
+  "env" "env.example" "sh" "bash" "yml" "yaml" "sql"
+  "ini" "conf" "toml" "xml" "csv"
+)
+
+# Max number of header lines per file in preview
+PREVIEW_LINES=40
+# -------------------------------------------------
+
+===== index.html =====
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>La Hache Contest — Planificateur</title>
+    <link rel="icon" href="/la-hache-contest/favicon.ico" />
+  </head>
+  <body class="bg-neutral-50">
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>
+===== package-lock.json =====
+{
+  "name": "la-hache-contest",
+  "version": "0.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "la-hache-contest",
+      "version": "0.0.0",
+      "dependencies": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-router-dom": "^6.30.1"
+      },
+      "devDependencies": {
+        "@types/react": "^18.3.26",
+        "@types/react-dom": "^18.3.7",
+        "autoprefixer": "^10.4.20",
+        "postcss": "^8.4.41",
+        "tailwindcss": "^3.4.13",
+        "typescript": "^5.6.2",
+        "vite": "^5.4.8"
+      }
+    },
+    "node_modules/@alloc/quick-lru": {
+      "version": "5.2.0",
+      "resolved": "https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz",
+      "integrity": "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=10"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/@esbuild/aix-ppc64": {
+      "version": "0.21.5",
+      "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz",
+
+===== package.json =====
+{
+  "name": "la-hache-contest",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.26",
+    "@types/react-dom": "^18.3.7",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
+  }
+}
+
+===== README_DEPLOY.md =====
+# La Hache Contest — Hotfix intégral
+Build avec Vite + React + TS. Base déjà configurée pour /la-hache-contest/.
+
+## Déploiement
+1. `npm i && npm run build`
+2. Copier le dossier `dist/` vers `/volume2/web/la-hache-contest/` (remplace les assets frontend)
+3. Garder /adapter le dossier `api/` côté serveur si tu as déjà une base SQLite existante.
+
+## Notes
+- Alias `@` → `src/`
+- `index.html` pointe vers `/src/main.tsx` (OK en dev; en prod Vite injecte les bundles).
+===== src/api/auth.tsx =====
+// src/api/auth.tsx
+import React from 'react'
+
+/* ===================== Types ===================== */
+
+export type Role = 'admin' | 'benevole'
+export type Me = { email: string; role: Role } | null
+
+type MeContextShape = {
+  me: Me
+  loading: boolean
+  setMe: React.Dispatch<React.SetStateAction<Me>>
+  refresh: () => Promise<void>
+}
+
+type MeApiResponse =
+  | { auth: true; user: { email: string; role: Role }; csrf?: string | null }
+  | { auth: false; user: null; csrf?: string | null }
+  | Record<string, unknown>
+
+type LoginResponse =
+  | { ok: true; user?: { email: string; role: Role } }
+  | { ok: false; error?: string }
+
+type RegisterPayload = {
+  first_name?: string
+  last_name?: string
+  name?: string
+  email: string
+  password: string
+  optin?: boolean
+}
+
+type RegisterResponse =
+  | { ok: true; user?: { email: string; role: Role } }
+  | { ok: false; error?: string }
+
+/* ===================== Helpers ===================== */
+
+const API_BASE = '/la-hache-contest/api'
+
+===== src/api/avail.ts =====
+// src/api/avail.ts
+import client from '@/api/client'
+
+export type AvailCell = 'none' | 'dispo' | 'juge' | 'build' | 'staff'
+export type AvailMap = Record<string, AvailCell>
+export type AvailWriteMap = Record<string, 'none' | 'dispo'>
+
+/** Charge les dispos (sans email = utilisateur courant) */
+export async function loadAvail(email?: string): Promise<AvailMap> {
+  const path = email ? `/avail_get.php?email=${encodeURIComponent(email)}` : `/avail_get.php`
+  const r = await client.request(path)
+  return (r?.avail ?? {}) as AvailMap
+}
+
+/** Écrase TOUT et réécrit uniquement les créneaux visibles */
+export async function saveAvail(avail: AvailWriteMap, email?: string): Promise<void> {
+  const body: any = { avail }
+  if (email) body.email = email
+  await client.request('/overwrite_avail.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+    body: JSON.stringify(body),
+  })
+}
+
+===== src/api/client.ts =====
+// src/api/client.ts
+const BASE = '/la-hache-contest/api'
+
+type ReqInit = RequestInit & { body?: any }
+
+async function parse(res: Response) {
+  const ct = res.headers.get('content-type') || ''
+  if (ct.includes('application/json')) return await res.json()
+  const text = await res.text()
+  try { return JSON.parse(text) } catch { return { raw: text } }
+}
+
+export default {
+  async request(path: string, init: ReqInit = {}) {
+    const url = path.startsWith('/') ? `${BASE}${path}` : `${BASE}/${path}`
+
+    const hasBody = init.body !== undefined && init.body !== null
+    const headers = new Headers(init.headers || {})
+    if (hasBody && !headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json')
+    }
+
+    const res = await fetch(url, {
+      method: init.method || (hasBody ? 'POST' : 'GET'),
+      credentials: 'include',          // <<=== cookies de session envoyés
+      cache: 'no-store',
+      headers,
+      body: hasBody ? (typeof init.body === 'string' ? init.body : JSON.stringify(init.body)) : undefined,
+    })
+
+    const data = await parse(res)
+    if (!res.ok) {
+      throw new Error((data && (data.error || data.message)) || `HTTP ${res.status}`)
+    }
+    return data
+  }
+}
+
+===== src/api/dispos.ts =====
+// src/api/dispos.ts
+import api from './client'
+export type AvailMap = Record<string, 'none'|'dispo'|'juge'|'build'>
+
+export async function loadAvail(email?: string): Promise<{avail:AvailMap}> {
+  const qs = email ? `?email=${encodeURIComponent(email)}` : ''
+  return api.request(`/avail_get.php${qs}`)
+}
+
+export async function saveAvail(avail: AvailMap, email?: string): Promise<void> {
+  const body: any = { avail }
+  if (email) body.email = email
+  await api.request('/avail_save.php', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
+}
+
+===== src/api/heats.ts =====
+// src/api/heats.ts
+import client from '@/api/client'
+
+export type Line = {
+  equipe: string
+  juge: string
+  build: string
+}
+
+export type Heat = {
+  day: 'samedi'|'dimanche'|string
+  start: string
+  wod: string
+  heat: number
+  lignes: Line[]
+}
+
+/** Charge tous les heats (JSON normalisé) */
+export async function getHeats(): Promise<Heat[]> {
+  const data: any = await client.request('/heats_get.php')
+  const arr = Array.isArray(data?.heats) ? data.heats : (Array.isArray(data) ? data : [])
+  return arr.map((h: any) => ({
+    day: String(h.day ?? h.jour ?? '').toLowerCase() || 'samedi',
+    start: String(h.start ?? h.heure ?? ''),
+    wod: String(h.wod ?? ''),
+    heat: Number(h.heat ?? h.numero ?? 0),
+    lignes: Array.isArray(h.lignes)
+      ? h.lignes.map((ln: any) => ({
+          equipe: String(ln?.equipe ?? ''),
+          juge: String(ln?.juge ?? ''),
+          build: String(ln?.build ?? ''),
+        }))
+      : [],
+  })) as Heat[]
+}
+
+/** Sauvegarde des heats (même structure que getHeats) */
+export async function saveHeats(heats: Heat[]): Promise<void> {
+  await client.request('/heats_save.php', {
+    method: 'POST',
+
+===== src/api/teams.ts =====
+// src/api/teams.ts
+import client from '@/api/client'
+
+export type TeamCat = ''|'Régular'|'Inter'|'RX'
+export type Team = { id:string; name:string; cat:TeamCat }
+
+export async function loadTeams(): Promise<Team[]>{
+  const r = await client.request('/teams_get.php')
+  return (r?.teams ?? []) as Team[]
+}
+
+export async function saveTeams(teams: Team[]): Promise<void>{
+  await client.request('/teams_save.php', { method:'POST', body: JSON.stringify({teams}) })
+}
+
+===== src/api/users.ts =====
+// src/api/users.ts
+import client from '@/api/client'
+
+export type User = {
+  id?: number
+  name?: string
+  email?: string
+  role?: 'admin' | 'benevole'
+  poste?: 'juge' | 'build' | 'staff' | null
+  is_active?: number | boolean
+}
+
+export async function listUsers(): Promise<User[]> {
+  const r = await client.request('/users_list.php')
+  const arr = Array.isArray(r?.users) ? r.users : []
+  return arr as User[]
+}
+
+export async function updateUser(opts: {
+  email: string
+  role?: 'admin'|'benevole'
+  poste?: 'juge'|'build'|'staff'|null
+  is_active?: boolean
+}): Promise<void> {
+  await client.request('/users_update.php', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json' },
+    body: JSON.stringify(opts),
+  })
+}
+
+===== src/App.tsx =====
+// src/App.tsx
+import React from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import Planning from '@/pages/Planning'
+import MesDispos from '@/pages/MesDispos'
+import HeatsPage from '@/pages/Heats'
+import Admin from '@/pages/Admin'
+import Stats from '@/pages/Stats'
+import Login from '@/pages/Login'
+import Register from '@/pages/Register'
+import { useMe } from '@/api/auth'
+import Teams from '@/pages/Teams'   // <-- NEW
+
+function NavBar(){
+  const { me, setMe } = useMe()
+  const doLogout = async ()=>{
+    setMe(null)
+    try { await fetch('/la-hache-contest/api/logout.php',{method:'POST',credentials:'include',cache:'no-store',headers:{'Cache-Control':'no-store'}}) } catch {}
+    try { localStorage.removeItem('csrf') } catch {}
+    try { sessionStorage.clear() } catch {}
+    window.location.replace('/la-hache-contest/#/login')
+  }
+
+  return (
+    <header className="sticky top-0 z-50 bg-white border-b mb-3">
+      <div className="max-w-6xl mx-auto p-3 flex gap-3 items-center">
+        <a className="underline" href="/la-hache-contest/#/">Planning</a>
+        <a className="underline" href="/la-hache-contest/#/dispos">Mes disponibilités</a>
+        <a className="underline" href="/la-hache-contest/#/stats">Stats</a>
+        <a className="underline" href="/la-hache-contest/#/teams">Teams</a> {/* <-- NEW (public, lecture seule) */}
+        {me?.role === 'admin' && <a className="underline" href="/la-hache-contest/#/heats">Heats</a>}
+        {me?.role === 'admin' && <a className="underline" href="/la-hache-contest/#/admin">Admin</a>}
+        {!me && <a className="underline ml-auto" href="/la-hache-contest/#/login">Login</a>}
+        {me && (
+          <div className="ml-auto flex items-center gap-2">
+            <span>Connecté: {me.email} ({me.role})</span>
+            <button onClick={doLogout} className="px-2 py-1 rounded bg-neutral-200">Logout</button>
+          </div>
+        )}
+      </div>
+
+===== src/components/DisposGrid.tsx =====
+import React from 'react'
+import { SLOTS } from '@/utils/time'
+
+export type Cell = 'none' | 'dispo'
+const DAYS = ['samedi','dimanche'] as const
+type Day = typeof DAYS[number]
+
+export default function DisposGrid({
+  value, onChange, assigned
+}:{
+  value: Record<string, Cell>,
+  onChange: (next: Record<string, Cell>) => void,
+  // clé = "samedi 09:00" etc. valeur = 'juge' | 'build' | 'staff'
+  assigned?: Record<string, 'juge'|'build'|'staff'>
+}){
+  const [brush, setBrush] = React.useState<Cell>('dispo')
+
+  const cls = (c:Cell) => c==='dispo' ? 'role-dispo' : 'role-none'
+  const keyOf = (day:Day, slot:string)=> `${day} ${slot}`
+
+  const applyBrush = (k: string) => {
+    if ((value[k] as Cell) === brush) return
+    onChange({ ...value, [k]: brush })
+  }
+  const cycle = (c: Cell): Cell => (c==='none' ? 'dispo' : 'none')
+
+  const draggingRef = React.useRef(false)
+  const onStart = () => { draggingRef.current = true }
+  const onEnd = () => { draggingRef.current = false }
+
+  React.useEffect(()=>{
+    const up = () => onEnd()
+    document.addEventListener('pointerup', up, { passive: true })
+    document.addEventListener('pointercancel', up, { passive: true })
+    return ()=> {
+      document.removeEventListener('pointerup', up)
+      document.removeEventListener('pointercancel', up)
+    }
+  }, [])
+
+
+===== src/hooks/useUsers.ts =====
+// src/hooks/useUsers.ts
+import React from 'react'
+import client from '@/api/client'
+
+export type User = {
+  id?: number
+  name?: string
+  email: string
+  role?: string
+  is_active?: number
+  poste?: string | null
+}
+
+export function useUsers() {
+  const [users, setUsers] = React.useState<User[]>([])
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const r = await client.request('/users_list.php')
+        const arr = (r?.users ?? []) as any[]
+        const norm = arr.map(u => ({
+          ...u,
+          email: String(u.email || '').toLowerCase(),
+          name: String(u.name || '').trim(),
+        }))
+        setUsers(norm)
+      } catch {
+        setUsers([])
+      }
+    })()
+  }, [])
+  return { users }
+}
+
+export function useUserMap() {
+  const { users } = useUsers()
+  const map = React.useMemo(() => {
+    const m = new Map<string, User>()
+    users.forEach(u => m.set((u.email || '').toLowerCase(), u))
+    return m
+
+===== src/index.css =====
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================
+   THEME & COLORS (modifiable ici)
+   =========================
+   Pour chaque rôle, tu as:
+   - --role-*-bg : couleur de fond
+   - --role-*-fg : couleur de texte
+*/
+:root {
+  /* Dispo (OK) */
+  --role-ok-bg: #dcfce7;   /* vert pastel */
+  --role-ok-fg: #065f46;   /* vert foncé lisible */
+
+  /* Juge */
+  --role-juge-bg: #78866b; /* kaki clair */
+  --role-juge-fg: #ffffff; /* blanc */
+  
+  /* Build */
+  --role-build-bg: #ebe0c6; /* beige */
+  --role-build-fg: #000000; /* noir */
+
+  /* Staff */
+  --role-staff-bg: #ffeb3b; /* jaune vif */
+  --role-staff-fg: #78866b; /* kaki clair */
+}
+
+/* =========================
+   BASE TYPO & LAYOUT
+   ========================= */
+:root {
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
+}
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+
+===== src/main.tsx =====
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import { HashRouter } from 'react-router-dom'
+import { MeProvider } from '@/api/auth'
+import '@/index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <HashRouter>
+      <MeProvider>
+        <App />
+      </MeProvider>
+    </HashRouter>
+  </React.StrictMode>
+)
+
+===== src/pages/Admin.tsx =====
+// src/pages/Admin.tsx
+import React from 'react'
+import { useMe } from '@/api/auth'
+import { loadAvail, saveAvail, type AvailMap, type AvailWriteMap } from '@/api/avail'
+import { useUsers, useUserMap } from '@/hooks/useUsers'
+import client from '@/api/client'
+
+// Grille commune (doit matcher MesDispos)
+const DAYS: Array<'samedi' | 'dimanche'> = ['samedi', 'dimanche']
+const HOURS = [
+  '07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30',
+  '11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30',
+  '15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30',
+  '19:00','19:30','20:00' // stop à 20:00
+]
+const keyOf = (day: string, hhmm: string) => `${day} ${hhmm}`
+
+// Filtre d’export (identique MesDispos)
+const H_MAX = 20
+function parseHM(s: string): [number, number] | null {
+  const m = /^([0-2]\d):([0-5]\d)$/.exec(s)
+  if (!m) return null
+  return [parseInt(m[1], 10), parseInt(m[2], 10)]
+}
+function isAllowedKey(key: string): boolean {
+  const m = /^(samedi|dimanche)\s+([0-2]\d:[0-5]\d)$/.exec(key.toLowerCase().trim())
+  if (!m) return false
+  const hm = parseHM(m[2]!)
+  if (!hm) return false
+  const [h, mi] = hm
+  if (!(mi === 0 || mi === 30)) return false
+  if (h < H_MAX) return true
+  if (h === H_MAX && mi === 0) return true
+  return false
+}
+
+type MinimalUser = {
+  email: string
+  role?: 'admin' | 'user'
+  is_active?: number
+
+===== src/pages/Heats.tsx =====
+// src/pages/Heats.tsx
+import React from 'react'
+import { getHeats, saveHeats, repartir, type Heat, type Line } from '@/api/heats'
+import { useUserMap } from '@/hooks/useUsers'
+
+type EditField = 'equipe' | 'juge' | 'build' | 'day' | 'start' | 'wod' | 'heat'
+type EditTarget = { hIdx: number; cIdx?: number; field: EditField }
+
+export default function HeatsPage(){
+  const [heats, setHeats] = React.useState<Heat[]>([])
+  const [cols, setCols] = React.useState<number>(10)
+  const [loading, setLoading] = React.useState(true)
+  const [saving, setSaving] = React.useState(false)
+  const [error, setError] = React.useState<string|null>(null)
+  const [info, setInfo] = React.useState<string|null>(null)
+
+  const [newDay, setNewDay] = React.useState<'samedi'|'dimanche'>('samedi')
+  const [newTime, setNewTime] = React.useState<string>('09:00')
+  const [newWod, setNewWod] = React.useState<string>('WOD1')
+  const [newHeatNum, setNewHeatNum] = React.useState<number>(1)
+
+  const [editing, setEditing] = React.useState<EditTarget | null>(null)
+  const [editValue, setEditValue] = React.useState<string>('')
+
+  const { resolve } = useUserMap()
+  const short = (v?: string) => {
+    const e = (v||'').toLowerCase()
+    if (!e) return ''
+    return resolve(e, true) || v || ''
+  }
+
+  const computeCols = (arr: Heat[]) =>
+    Math.max(10, arr.reduce((m,h)=>Math.max(m, h.lignes?.length||0), 0))
+
+  const load = async ()=>{
+    setLoading(true); setError(null); setInfo(null)
+    try {
+      const h = await getHeats()
+      setHeats(h)
+      setCols(computeCols(h))
+
+===== src/pages/Login.tsx =====
+import React from 'react'
+import { login } from '@/api/auth'
+import { useNavigate } from 'react-router-dom'
+
+export default function Login(){
+  const nav = useNavigate()
+  const [email, setEmail] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [error, setError] = React.useState<string| null>(null)
+  const [loading, setLoading] = React.useState(false)
+
+  const submit = async (e: React.FormEvent)=>{
+    e.preventDefault()
+    setLoading(true); setError(null)
+    try{
+      await login(email, password)
+      // IMPORTANT: reload pour que App/useMe relise /me.php avec la session fraîche
+      window.location.href = '/la-hache-contest/'
+    }catch{
+      setError('Identifiants invalides')
+    }finally{
+      setLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="pastel-card max-w-md mx-auto">
+      <h1 className="text-xl font-semibold mb-3">Connexion</h1>
+      <label className="block mb-2">Email
+        <input className="w-full border rounded p-2" value={email} onChange={e=>setEmail(e.target.value)} />
+      </label>
+      <label className="block mb-2">Mot de passe
+        <input type="password" className="w-full border rounded p-2" value={password} onChange={e=>setPassword(e.target.value)} />
+      </label>
+      {error && <div className="text-red-600 mb-2">{error}</div>}
+      <button disabled={loading} className="px-3 py-1 rounded bg-neutral-200">{loading?'Connexion…':'Se connecter'}</button>
+      <div className="mt-3 text-sm">
+        Pas de compte ? <a className="underline" onClick={(e)=>{e.preventDefault(); nav('/register')}} href="/register">Créer un compte</a>
+      </div>
+    </form>
+
+===== src/pages/MesDispos.tsx =====
+// src/pages/MesDispos.tsx
+import React from 'react'
+import { useMe } from '@/api/auth'
+import { loadAvail, saveAvail, type AvailMap, type AvailWriteMap } from '@/api/avail'
+import { getHeats, type Heat } from '@/api/heats'
+
+const DAYS: Array<'samedi'|'dimanche'> = ['samedi','dimanche']
+const HOURS = [
+  '07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30',
+  '11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30',
+  '15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30',
+  '19:00','19:30','20:00'
+]
+const keyOf = (day:string, hhmm:string)=> `${day} ${hhmm}`
+
+const H_MAX = 20
+const isAllowedKey = (key:string)=>{
+  const m=/^(samedi|dimanche)\s+([0-2]\d):([0-5]\d)$/.exec(key.toLowerCase().trim()); if(!m) return false
+  const h=+m[2], mi=+m[3]; if(!(mi===0||mi===30)) return false
+  if (h<H_MAX) return true; if (h===H_MAX && mi===0) return true; return false
+}
+
+type Brush = 'none'|'dispo'
+
+export default function MesDispos(){
+  const { me } = useMe()
+  const email = (me?.email||'').toLowerCase()
+
+  const [map, setMap] = React.useState<AvailMap>({})
+  const [overlay, setOverlay] = React.useState<Record<string,'juge'|'build'|'none'>>({})
+  const [brush, setBrush] = React.useState<Brush>('dispo')
+  const [painting, setPainting] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
+  const [saving, setSaving] = React.useState(false)
+  const [msg, setMsg] = React.useState<string|null>(null)
+  const [err, setErr] = React.useState<string|null>(null)
+
+  const buildOverlay = (heats: Heat[])=>{
+    const o: Record<string,'juge'|'build'|'none'> = {}
+    for (const h of heats){
+
+===== src/pages/Planning.tsx =====
+// src/pages/Planning.tsx
+import React from 'react'
+import { getHeats, type Heat } from '@/api/heats'
+import { useUserMap } from '@/hooks/useUsers'
+import { useMe } from '@/api/auth'
+
+function wodNum(w: string){ const m=/(\d+)/.exec(w||''); return m?parseInt(m[1],10):0 }
+function byWodHeat(a:Heat,b:Heat){ const wa=wodNum(a.wod), wb=wodNum(b.wod); return wa!==wb? wa-wb : (a.heat||0)-(b.heat||0) }
+function groupByWod(heats: Heat[]){
+  const m = new Map<string, Heat[]>()
+  for (const h of heats){
+    const key = h.wod || 'WOD ?'
+    if (!m.has(key)) m.set(key, [])
+    m.get(key)!.push(h)
+  }
+  for (const [, arr] of m) arr.sort(byWodHeat)
+  return Array.from(m.entries()).sort((a,b)=> wodNum(a[0]) - wodNum(b[0]))
+}
+function maxLanes(heats: Heat[]){
+  let n=0; for (const h of heats) n=Math.max(n, h.lignes?.length||0); return n
+}
+
+export default function Planning(){
+  const [heats, setHeats] = React.useState<Heat[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string|null>(null)
+
+  const { resolve, users } = useUserMap()
+  const { me } = useMe()
+  const meEmail = (me?.email||'').toLowerCase()
+  const [selectedEmail, setSelectedEmail] = React.useState<string>(meEmail)
+
+  React.useEffect(()=>{
+    (async()=>{
+      setLoading(true); setError(null)
+      try{
+        const arr = await getHeats()
+        setHeats(arr)
+      }catch(e:any){
+        setError(e?.message||'Erreur de chargement')
+
+===== src/pages/Register.tsx =====
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useMe, useAuthActions } from '@/api/auth'
+
+export default function Register(){
+  const nav = useNavigate()
+  const { doRegister } = useAuthActions()
+  const [first, setFirst] = React.useState('')
+  const [last, setLast] = React.useState('')
+  const [email, setEmail] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [optin, setOptin] = React.useState(false)
+  const [err, setErr] = React.useState<string|null>(null)
+
+  const submit = async (e:React.FormEvent)=>{
+    e.preventDefault()
+    setErr(null)
+    if (!first.trim() || !last.trim() || !email.trim() || !password || !optin) {
+      setErr('Veuillez remplir Prénom, Nom, Email, Mot de passe et accepter la protection des données.')
+      return
+    }
+    const res = await doRegister({ first_name:first.trim(), last_name:last.trim(), email: email.trim().toLowerCase(), password, optin: true } as any)
+    if (!res.ok) { setErr('Inscription impossible'); return }
+    nav('/', { replace:true })
+  }
+
+  return (
+    <div className="pastel-card" style={{maxWidth:460, margin:'40px auto'}}>
+      <h1 className="text-xl font-semibold mb-3">Créer un compte</h1>
+      {err && <div className="text-red-600 mb-2">{err}</div>}
+      <form onSubmit={submit} className="space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="text-sm">Prénom *</label>
+            <input className="input" value={first} onChange={e=>setFirst(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-sm">Nom *</label>
+            <input className="input" value={last} onChange={e=>setLast(e.target.value)} />
+          </div>
+
+===== src/pages/Stats.tsx =====
+// src/pages/Stats.tsx
+import React from 'react'
+import { loadAvail } from '@/api/avail'
+import { useUsers } from '@/hooks/useUsers'
+
+const HOURS = [
+  '07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30',
+  '11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30',
+  '15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30',
+  '19:00','19:30','20:00'
+]
+type Day = 'samedi' | 'dimanche'
+
+type Bucket = { juge:number; build:number; staff:number }
+function emptyBuckets(): Record<string, Bucket> {
+  const m: Record<string, Bucket> = {}
+  for (const h of HOURS) m[h] = { juge:0, build:0, staff:0 }
+  return m
+}
+
+function normPoste(p?: string): 'juge'|'build'|'staff'|'' {
+  const s = (p||'').toLowerCase().trim()
+  if (!s) return ''
+  if (s.startsWith('j')) return 'juge'
+  if (s.startsWith('b')) return 'build'
+  if (s === 'staff')     return 'staff'
+  if (s === 'juge' || s === 'build') return s as any
+  return ''
+}
+
+export default function Stats(){
+  const { users } = useUsers()
+  const [selectedDay, setSelectedDay] = React.useState<Day>('samedi')
+
+  const [buckets, setBuckets] = React.useState<Record<string, Bucket>>(emptyBuckets())
+  const [loading, setLoading] = React.useState(true)
+  const [err, setErr] = React.useState<string|null>(null)
+
+  React.useEffect(()=>{
+    (async()=>{
+
+===== src/pages/Teams.tsx =====
+// src/pages/Teams.tsx
+import React from 'react'
+import { useMe } from '@/api/auth'
+import { getHeats } from '@/api/heats'
+import { loadTeams, saveTeams, type Team } from '@/api/teams'
+
+type Cat = ''|'Régular'|'Inter'|'RX'
+type HeatLine = { equipe?: string; juge?: string; build?: string }
+type Heat = { wod: string; heat: number; start: string; lignes: HeatLine[] }
+
+const CAT_ORDER: Cat[] = ['', 'Régular','Inter','RX']
+
+export default function TeamsPage(){
+  const { me } = useMe()
+  const isAdmin = me?.role === 'admin'
+
+  const [teams, setTeams] = React.useState<Team[]>([])
+  const [heats, setHeats] = React.useState<Heat[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [saving, setSaving] = React.useState(false)
+  const [msg, setMsg] = React.useState<string|null>(null)
+  const [err, setErr] = React.useState<string|null>(null)
+
+  React.useEffect(()=>{(async()=>{
+    setLoading(true); setErr(null)
+    try{
+      const [t, hRaw] = await Promise.all([
+        loadTeams(),
+        getHeats().then((r:any)=> Array.isArray(r)? r : (r?.heats || []))
+      ])
+      setTeams(t)
+      const norm = (x:any):Heat => ({
+        wod: String(x?.wod ?? ''),
+        heat: Number(x?.heat ?? x?.numero ?? 0),
+        start: String(x?.start ?? x?.heure ?? ''),
+        lignes: Array.isArray(x?.lignes) ? x.lignes : []
+      })
+      setHeats((hRaw||[]).map(norm))
+    }catch(e:any){ setErr(e?.message||'Erreur de chargement') }
+    finally{ setLoading(false) }
+
+===== src/styles.css =====
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --pastel-green: #a7f3d0;
+  --pastel-red: #fecaca;
+  --pastel-blue: #bfdbfe;
+  --pastel-brown: #d6bfa6;
+}
+
+.pastel-card { @apply rounded-2xl shadow-sm p-4 bg-white; }
+===== src/utils/time.ts =====
+// src/utils/time.ts
+// Créneaux de 07:00 à 20:00 (inclus) toutes les 30 minutes.
+const START_H = 7
+const END_H   = 20
+const STEP_MIN = 30
+
+function pad(n: number): string { return n < 10 ? '0'+n : ''+n }
+
+export const SLOTS: string[] = (() => {
+  const arr: string[] = []
+  for (let h = START_H; h <= END_H; h++) {
+    for (let m = 0; m < 60; m += STEP_MIN) {
+      if (h === END_H && m > 0) break // ne pas dépasser 20:00
+      arr.push(`${pad(h)}:${pad(m)}`)
+    }
+  }
+  return arr
+})()
+
+===== tsconfig.json =====
+{
+  "extends": "./tsconfig.paths.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true
+  },
+  "include": ["src"]
+}
+===== tsconfig.paths.json =====
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+===== vite.config.ts =====
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+export default defineConfig({
+  base: '/la-hache-contest/',
+  plugins: [react()],
+  resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
+})

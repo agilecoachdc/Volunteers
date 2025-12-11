@@ -1,0 +1,354 @@
+{
+    "teams": [
+        {
+            "id": "1a7bc8f5-fc03-4d2e-81af-d7ad642281ca",
+            "name": "Team02",
+            "cat": "Régular"
+        },
+        {
+            "id": "c94f9b82-1cd8-4343-94df-3e2d434f78fc",
+            "name": "Team01",
+            "cat": "Régular"
+        },
+        {
+            "id": "969b6547-bbfa-4fab-aea0-287692a951ea",
+            "name": "Team03",
+            "cat": "Régular"
+        },
+        {
+            "id": "f4892908-e05f-4805-a470-33f8aff87a0b",
+            "name": "Team04",
+            "cat": "Régular"
+        },
+        {
+            "id": "3c90e5c5-aa8a-46bc-84db-6b1ada56f364",
+            "name": "Team05",
+            "cat": "Régular"
+        },
+        {
+            "id": "37eed563-b0c0-4cb4-aa1e-83c82d32f77a",
+            "name": "Team06",
+            "cat": "Régular"
+        },
+        {
+            "id": "b2bf172f-a78a-4dc1-a518-a0f18b8b9f61",
+            "name": "Team07",
+            "cat": "Régular"
+        },
+        {
+            "id": "bd6115a2-b03c-4beb-bbf7-ac99fb123de0",
+            "name": "Team08",
+            "cat": "Régular"
+        },
+        {
+            "id": "e76510f2-9850-4a0d-b190-a48d5aabc431",
+            "name": "Team09",
+            "cat": "Régular"
+        },
+        {
+            "id": "2a77d336-a04c-4481-91c5-29282be3da10",
+            "name": "Team10",
+            "cat": "Régular"
+        },
+        {
+            "id": "e6f6ebf5-a123-430c-af2a-927165c735f2",
+            "name": "Team11",
+            "cat": "Régular"
+        },
+        {
+            "id": "6e7eddb0-7f03-4d35-8f2b-50ef3f10f69a",
+            "name": "Team12",
+            "cat": "Régular"
+        },
+        {
+            "id": "a8bf2020-d252-4d40-88b1-22375117715b",
+            "name": "Team13",
+            "cat": "Régular"
+        },
+        {
+            "id": "8529ec2a-b1a2-46e1-a48a-7a8a7695d5ae",
+            "name": "Team14",
+            "cat": "Régular"
+        },
+        {
+            "id": "3656d137-8f40-4215-99d2-6631ba35b92c",
+            "name": "Team15",
+            "cat": "Régular"
+        },
+        {
+            "id": "404c97a1-3c2d-4bec-9860-0353326e8b48",
+            "name": "Team16",
+            "cat": "Régular"
+        },
+        {
+            "id": "4752ca38-d988-44a8-b7a0-fc2fd541ba6a",
+            "name": "Team17",
+            "cat": "Régular"
+        },
+        {
+            "id": "67d61578-f575-4e0b-a8c0-8d247f51906a",
+            "name": "Team18",
+            "cat": "Régular"
+        },
+        {
+            "id": "8c7bd294-4e23-4cbf-8928-e417073c4aba",
+            "name": "Team19",
+            "cat": "Régular"
+        },
+        {
+            "id": "33ddec2e-b89f-438e-b263-6b202a27eb70",
+            "name": "Team20",
+            "cat": "Régular"
+        },
+        {
+            "id": "a3532d5c-9223-46f6-9441-9279734e340a",
+            "name": "Team21",
+            "cat": "Régular"
+        },
+        {
+            "id": "5cbf3204-5ade-47d5-8c61-ae90752a76b5",
+            "name": "Team22",
+            "cat": "Régular"
+        },
+        {
+            "id": "e2bfba8e-00be-47c1-b111-24f27052bd69",
+            "name": "Team23",
+            "cat": "Régular"
+        },
+        {
+            "id": "7260193e-f6ca-40ab-9c27-7626a3a2b6cf",
+            "name": "Team24",
+            "cat": "Régular"
+        },
+        {
+            "id": "ab0551f2-c18c-4a89-a961-91eb4c708d4e",
+            "name": "Team25",
+            "cat": "Régular"
+        },
+        {
+            "id": "229f105b-1d20-4397-804e-9bcd1f2d0cc6",
+            "name": "Team26",
+            "cat": "Régular"
+        },
+        {
+            "id": "c3a04820-cb88-4f28-932a-7a6975ebdeab",
+            "name": "Team27",
+            "cat": "Régular"
+        },
+        {
+            "id": "a6b11293-c923-4a3d-9302-ec0c5b565b5c",
+            "name": "Team28",
+            "cat": "Régular"
+        },
+        {
+            "id": "21387010-7fe1-42c2-b7fe-57de32323720",
+            "name": "Team29",
+            "cat": "Régular"
+        },
+        {
+            "id": "a9540969-82e6-4ad9-9f84-fb0b355ea161",
+            "name": "Team30",
+            "cat": "Régular"
+        },
+        {
+            "id": "f4313f20-cfdd-4cc0-89dd-a78cf1035b86",
+            "name": "Team31",
+            "cat": "Inter"
+        },
+        {
+            "id": "1cf079fb-7ae4-4013-b132-9b10ec92a85c",
+            "name": "Team32",
+            "cat": "Inter"
+        },
+        {
+            "id": "6eb20d94-5f39-4af7-a1a8-08fb1c31813b",
+            "name": "Team33",
+            "cat": "Inter"
+        },
+        {
+            "id": "354c33b3-1129-4ed6-9212-3038ed4731ca",
+            "name": "Team34",
+            "cat": "Inter"
+        },
+        {
+            "id": "f60d0bb4-7766-4b9d-a343-a83d15c275ef",
+            "name": "Team35",
+            "cat": "Inter"
+        },
+        {
+            "id": "cdb770ab-428c-4335-bdcb-9323a027be85",
+            "name": "Team36",
+            "cat": "Inter"
+        },
+        {
+            "id": "3701a0ed-7dd9-4d83-8c5c-98808df01df7",
+            "name": "Team37",
+            "cat": "Inter"
+        },
+        {
+            "id": "9d16e954-1616-4bad-8064-4cbaa9034425",
+            "name": "Team38",
+            "cat": "Inter"
+        },
+        {
+            "id": "c0f40c51-c8ff-4dd3-9fa1-107f790037f6",
+            "name": "Team39",
+            "cat": "Inter"
+        },
+        {
+            "id": "0c791348-072e-4fdf-99eb-312b605d759f",
+            "name": "Team40",
+            "cat": "Inter"
+        },
+        {
+            "id": "d49e1a7a-b36b-4d9b-a77e-a18711d5793f",
+            "name": "Team41",
+            "cat": "Inter"
+        },
+        {
+            "id": "5c72065c-da73-4dab-9f1d-7e18a6b4606a",
+            "name": "Team42",
+            "cat": "Inter"
+        },
+        {
+            "id": "9345c761-e102-48bd-b4d7-c75e235b0790",
+            "name": "Team43",
+            "cat": "Inter"
+        },
+        {
+            "id": "387bd542-be3a-4542-8627-dcae712c7919",
+            "name": "Team44",
+            "cat": "Inter"
+        },
+        {
+            "id": "908a6ce6-ce01-486e-81c3-5b086c034f07",
+            "name": "Team45",
+            "cat": "Inter"
+        },
+        {
+            "id": "da2c8035-ab72-4110-900f-c654df487121",
+            "name": "Team46",
+            "cat": "Inter"
+        },
+        {
+            "id": "7f851909-a926-47ce-9472-169820d6b50c",
+            "name": "Team47",
+            "cat": "Inter"
+        },
+        {
+            "id": "2e2b313b-aeab-4609-b36c-44769e2befaa",
+            "name": "Team48",
+            "cat": "Inter"
+        },
+        {
+            "id": "6a63ba22-2dfc-4071-8856-2dc95ed4b27c",
+            "name": "Team49",
+            "cat": "Inter"
+        },
+        {
+            "id": "4ad1d7bb-5daa-4c6a-92bc-8cbed61bd5e8",
+            "name": "Team50",
+            "cat": "Inter"
+        },
+        {
+            "id": "22619042-766e-4178-add8-5aa3f963830c",
+            "name": "Team51",
+            "cat": "RX"
+        },
+        {
+            "id": "6f61e865-cdd2-4751-bf13-9cecdf48dee7",
+            "name": "Team52",
+            "cat": "RX"
+        },
+        {
+            "id": "a78f7df7-01b0-4f97-bf10-65f9fed674b1",
+            "name": "Team53",
+            "cat": "RX"
+        },
+        {
+            "id": "2312985d-3bee-4b2a-824e-a58cd09b5490",
+            "name": "Team54",
+            "cat": "RX"
+        },
+        {
+            "id": "71a0f26f-66cc-4b84-ab71-50b743e9f9ad",
+            "name": "Team55",
+            "cat": "RX"
+        },
+        {
+            "id": "4d739a45-1e88-4bf5-a74d-6b849ce3ea43",
+            "name": "Team57",
+            "cat": "RX"
+        },
+        {
+            "id": "ebfc3f90-9166-4869-ae3c-8f84d8a1113a",
+            "name": "Team58",
+            "cat": "RX"
+        },
+        {
+            "id": "48aa99d9-885b-4db7-9090-a8e1b515547a",
+            "name": "Team59",
+            "cat": "RX"
+        },
+        {
+            "id": "d9650cca-3fb2-4eca-bb52-e837aa7cf40c",
+            "name": "Team60",
+            "cat": "RX"
+        },
+        {
+            "id": "9d2059f9-3fd5-4f03-91e6-1cb03cf7937f",
+            "name": "Team61",
+            "cat": "RX"
+        },
+        {
+            "id": "382cdf47-8b8e-48f3-9921-a4291a8ea868",
+            "name": "Team62",
+            "cat": "RX"
+        },
+        {
+            "id": "14fab77d-2b8a-4448-bd77-48961e013b33",
+            "name": "Team63",
+            "cat": "RX"
+        },
+        {
+            "id": "bc861b78-9eda-4ee7-babb-fbc4c62d391f",
+            "name": "Team64",
+            "cat": "RX"
+        },
+        {
+            "id": "c6234819-5249-47d3-8efe-c13db7978b19",
+            "name": "Team65",
+            "cat": "RX"
+        },
+        {
+            "id": "83965c51-8922-4956-a251-36aeb5b97b6b",
+            "name": "Team66",
+            "cat": "RX"
+        },
+        {
+            "id": "809b2077-e948-47ef-b99e-68edc0fdd8e0",
+            "name": "Team67",
+            "cat": "RX"
+        },
+        {
+            "id": "232b92c5-dab0-4275-adca-fc6fbf38c337",
+            "name": "Team68",
+            "cat": "RX"
+        },
+        {
+            "id": "0f06ace3-9688-4c9b-8202-53d8a13969ee",
+            "name": "Team69",
+            "cat": "RX"
+        },
+        {
+            "id": "449a82d6-78f0-43cb-a598-e8378f9c0cc3",
+            "name": "Team70",
+            "cat": "RX"
+        },
+        {
+            "id": "0c54e77a-58a3-4c2a-914d-28941f5a8ab3",
+            "name": "Team56",
+            "cat": "RX"
+        }
+    ]
+}

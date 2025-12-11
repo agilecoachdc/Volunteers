@@ -1,0 +1,2884 @@
+{
+    "heats": [
+        {
+            "day": "samedi",
+            "start": "09:00",
+            "wod": "WOD1",
+            "heat": 1,
+            "lignes": [
+                {
+                    "equipe": "Team01",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team02",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team03",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team04",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team05",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team06",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team07",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team08",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team09",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team10",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "09:00"
+        },
+        {
+            "day": "samedi",
+            "start": "09:15",
+            "wod": "WOD1",
+            "heat": 2,
+            "lignes": [
+                {
+                    "equipe": "Team11",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team12",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team13",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team14",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team15",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team16",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team17",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team18",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team19",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team20",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "09:15"
+        },
+        {
+            "day": "samedi",
+            "start": "09:30",
+            "wod": "WOD1",
+            "heat": 3,
+            "lignes": [
+                {
+                    "equipe": "Team21",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team22",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team23",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team24",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team25",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team26",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team27",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team28",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team29",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team30",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "09:30"
+        },
+        {
+            "day": "samedi",
+            "start": "09:45",
+            "wod": "WOD1",
+            "heat": 4,
+            "lignes": [
+                {
+                    "equipe": "Team31",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team32",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team33",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team34",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team35",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team36",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team37",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team38",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team39",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team40",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "09:45"
+        },
+        {
+            "day": "samedi",
+            "start": "10:00",
+            "wod": "WOD1",
+            "heat": 5,
+            "lignes": [
+                {
+                    "equipe": "Team41",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team42",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team43",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team44",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team45",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team46",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team47",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team48",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team49",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team50",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "10:00"
+        },
+        {
+            "day": "samedi",
+            "start": "10:15",
+            "wod": "WOD1",
+            "heat": 6,
+            "lignes": [
+                {
+                    "equipe": "Team51",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team52",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team53",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team54",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team55",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team56",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team57",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team58",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team59",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team60",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "10:15"
+        },
+        {
+            "day": "samedi",
+            "start": "10:30",
+            "wod": "WOD1",
+            "heat": 7,
+            "lignes": [
+                {
+                    "equipe": "Team61",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team62",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team63",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team64",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team65",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team66",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team67",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team68",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team69",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team70",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "10:30"
+        },
+        {
+            "day": "samedi",
+            "start": "10:37",
+            "wod": "WOD2",
+            "heat": 1,
+            "lignes": [
+                {
+                    "equipe": "Team01",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team02",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team03",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team04",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team05",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team06",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team07",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team08",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team09",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team10",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "10:37"
+        },
+        {
+            "day": "samedi",
+            "start": "10:45",
+            "wod": "WOD2",
+            "heat": 2,
+            "lignes": [
+                {
+                    "equipe": "Team11",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team12",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team13",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team14",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team15",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team16",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team17",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team18",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team19",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team20",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "10:45"
+        },
+        {
+            "day": "samedi",
+            "start": "11:00",
+            "wod": "WOD2",
+            "heat": 3,
+            "lignes": [
+                {
+                    "equipe": "Team21",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team22",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team23",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team24",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team25",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team26",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team27",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team28",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team29",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team30",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "11:00"
+        },
+        {
+            "day": "samedi",
+            "start": "11:15",
+            "wod": "WOD2",
+            "heat": 4,
+            "lignes": [
+                {
+                    "equipe": "Team31",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team32",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team33",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team34",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team35",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team36",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team37",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team38",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team39",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team40",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "11:15"
+        },
+        {
+            "day": "samedi",
+            "start": "11:30",
+            "wod": "WOD2",
+            "heat": 5,
+            "lignes": [
+                {
+                    "equipe": "Team41",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team42",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team43",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team44",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team45",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team46",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team47",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team48",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team49",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team50",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "11:30"
+        },
+        {
+            "day": "samedi",
+            "start": "11:45",
+            "wod": "WOD2",
+            "heat": 6,
+            "lignes": [
+                {
+                    "equipe": "Team51",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team52",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team53",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team54",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team55",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team56",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team57",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team58",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team59",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team60",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "11:45"
+        },
+        {
+            "day": "samedi",
+            "start": "12:00",
+            "wod": "WOD2",
+            "heat": 7,
+            "lignes": [
+                {
+                    "equipe": "Team61",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team62",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team63",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team64",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team65",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team66",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team67",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team68",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team69",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team70",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "12:00"
+        },
+        {
+            "day": "samedi",
+            "start": "12:15",
+            "wod": "WOD3",
+            "heat": 1,
+            "lignes": [
+                {
+                    "equipe": "Team01",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team02",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team03",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team04",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team05",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team06",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team07",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team08",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team09",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team10",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "12:15"
+        },
+        {
+            "day": "samedi",
+            "start": "12:30",
+            "wod": "WOD3",
+            "heat": 2,
+            "lignes": [
+                {
+                    "equipe": "Team11",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team12",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team13",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team14",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team15",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team16",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team17",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team18",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team19",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team20",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "12:30"
+        },
+        {
+            "day": "samedi",
+            "start": "12:45",
+            "wod": "WOD3",
+            "heat": 3,
+            "lignes": [
+                {
+                    "equipe": "Team21",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team22",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team23",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team24",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team25",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team26",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team27",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team28",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team29",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team30",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "12:45"
+        },
+        {
+            "day": "samedi",
+            "start": "13:00",
+            "wod": "WOD3",
+            "heat": 4,
+            "lignes": [
+                {
+                    "equipe": "Team31",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team32",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team33",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team34",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team35",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team36",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team37",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team38",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team39",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team40",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "13:00"
+        },
+        {
+            "day": "samedi",
+            "start": "13:15",
+            "wod": "WOD3",
+            "heat": 5,
+            "lignes": [
+                {
+                    "equipe": "Team41",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team42",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team43",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team44",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team45",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team46",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team47",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team48",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team49",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team50",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "13:15"
+        },
+        {
+            "day": "samedi",
+            "start": "13:30",
+            "wod": "WOD3",
+            "heat": 6,
+            "lignes": [
+                {
+                    "equipe": "Team51",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team52",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team53",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team54",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team55",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team56",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team57",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team58",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team59",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team60",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "13:30"
+        },
+        {
+            "day": "samedi",
+            "start": "13:45",
+            "wod": "WOD3",
+            "heat": 7,
+            "lignes": [
+                {
+                    "equipe": "Team61",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team62",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team63",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team64",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team65",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team66",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team67",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team68",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team69",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team70",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "13:45"
+        },
+        {
+            "day": "samedi",
+            "start": "14:00",
+            "wod": "WOD4",
+            "heat": 1,
+            "lignes": [
+                {
+                    "equipe": "Team01",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team02",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team03",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team04",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team05",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team06",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team07",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team08",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team09",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team10",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "14:00"
+        },
+        {
+            "day": "samedi",
+            "start": "14:15",
+            "wod": "WOD4",
+            "heat": 2,
+            "lignes": [
+                {
+                    "equipe": "Team11",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team12",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team13",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team14",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team15",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team16",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team17",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team18",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team19",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team20",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "14:15"
+        },
+        {
+            "day": "samedi",
+            "start": "14:30",
+            "wod": "WOD4",
+            "heat": 3,
+            "lignes": [
+                {
+                    "equipe": "Team21",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team22",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team23",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team24",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team25",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team26",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team27",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team28",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team29",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team30",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "14:30"
+        },
+        {
+            "day": "samedi",
+            "start": "14:45",
+            "wod": "WOD4",
+            "heat": 4,
+            "lignes": [
+                {
+                    "equipe": "Team31",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team32",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team33",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team34",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team35",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team36",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team37",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team38",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team39",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team40",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "14:45"
+        },
+        {
+            "day": "samedi",
+            "start": "15:00",
+            "wod": "WOD4",
+            "heat": 5,
+            "lignes": [
+                {
+                    "equipe": "Team41",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team42",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team43",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team44",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team45",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team46",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team47",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team48",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team49",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team50",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "15:00"
+        },
+        {
+            "day": "samedi",
+            "start": "15:15",
+            "wod": "WOD4",
+            "heat": 6,
+            "lignes": [
+                {
+                    "equipe": "Team51",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team52",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team53",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team54",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team55",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team56",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team57",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team58",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team59",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team60",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "15:15"
+        },
+        {
+            "day": "samedi",
+            "start": "15:30",
+            "wod": "WOD4",
+            "heat": 7,
+            "lignes": [
+                {
+                    "equipe": "Team61",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team62",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team63",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team64",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team65",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team66",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team67",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team68",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team69",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team70",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "samedi",
+            "heure": "15:30"
+        },
+        {
+            "day": "dimanche",
+            "start": "09:00",
+            "wod": "WOD5",
+            "heat": 1,
+            "lignes": [
+                {
+                    "equipe": "Team01",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team02",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team03",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team04",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team05",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team06",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team07",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team08",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team09",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team10",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "09:00"
+        },
+        {
+            "day": "dimanche",
+            "start": "09:15",
+            "wod": "WOD5",
+            "heat": 2,
+            "lignes": [
+                {
+                    "equipe": "Team11",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team12",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team13",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team14",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team15",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team16",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team17",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team18",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team19",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team20",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "09:15"
+        },
+        {
+            "day": "dimanche",
+            "start": "09:30",
+            "wod": "WOD5",
+            "heat": 3,
+            "lignes": [
+                {
+                    "equipe": "Team21",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team22",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team23",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team24",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team25",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team26",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team27",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team28",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team29",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team30",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "09:30"
+        },
+        {
+            "day": "dimanche",
+            "start": "09:45",
+            "wod": "WOD5",
+            "heat": 4,
+            "lignes": [
+                {
+                    "equipe": "Team31",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team32",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team33",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team34",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team35",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team36",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team37",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team38",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team39",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team40",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "09:45"
+        },
+        {
+            "day": "dimanche",
+            "start": "10:00",
+            "wod": "WOD5",
+            "heat": 5,
+            "lignes": [
+                {
+                    "equipe": "Team41",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team42",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team43",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team44",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team45",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team46",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team47",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team48",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team49",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team50",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "10:00"
+        },
+        {
+            "day": "dimanche",
+            "start": "10:15",
+            "wod": "WOD5",
+            "heat": 6,
+            "lignes": [
+                {
+                    "equipe": "Team51",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team52",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team53",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team54",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team55",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team56",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team57",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team58",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team59",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team60",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "10:15"
+        },
+        {
+            "day": "dimanche",
+            "start": "10:33",
+            "wod": "WOD6",
+            "heat": 1,
+            "lignes": [
+                {
+                    "equipe": "Team01",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team02",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team03",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team04",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team05",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team06",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team07",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team08",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team09",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team10",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "10:33"
+        },
+        {
+            "day": "dimanche",
+            "start": "10:45",
+            "wod": "WOD6",
+            "heat": 2,
+            "lignes": [
+                {
+                    "equipe": "Team11",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team12",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team13",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team14",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team15",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team16",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team17",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team18",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team19",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team20",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "10:45"
+        },
+        {
+            "day": "dimanche",
+            "start": "11:15",
+            "wod": "WOD6",
+            "heat": 3,
+            "lignes": [
+                {
+                    "equipe": "Team21",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team22",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team23",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team24",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team25",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team26",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team27",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team28",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team29",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team30",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "11:15"
+        },
+        {
+            "day": "dimanche",
+            "start": "11:30",
+            "wod": "WOD6",
+            "heat": 4,
+            "lignes": [
+                {
+                    "equipe": "Team31",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team32",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team33",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team34",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team35",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team36",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team37",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team38",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team39",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team40",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "11:30"
+        },
+        {
+            "day": "dimanche",
+            "start": "11:45",
+            "wod": "WOD6",
+            "heat": 5,
+            "lignes": [
+                {
+                    "equipe": "Team41",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team42",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team43",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team44",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team45",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team46",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team47",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team48",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team49",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team50",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "11:45"
+        },
+        {
+            "day": "dimanche",
+            "start": "12:00",
+            "wod": "WOD6",
+            "heat": 6,
+            "lignes": [
+                {
+                    "equipe": "Team51",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team52",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team53",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team54",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team55",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team56",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team57",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team58",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team59",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team60",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "12:00"
+        },
+        {
+            "day": "dimanche",
+            "start": "14:00",
+            "wod": "WOD6",
+            "heat": 7,
+            "lignes": [
+                {
+                    "equipe": "Team61",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team62",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team63",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team64",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team65",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team66",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team67",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team68",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team69",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team70",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "14:00"
+        },
+        {
+            "day": "dimanche",
+            "start": "14:15",
+            "wod": "WOD7",
+            "heat": 1,
+            "lignes": [
+                {
+                    "equipe": "Team01",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team02",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team03",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team04",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team05",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team06",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team07",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team08",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team09",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team10",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "14:15"
+        },
+        {
+            "day": "dimanche",
+            "start": "14:30",
+            "wod": "WOD7",
+            "heat": 2,
+            "lignes": [
+                {
+                    "equipe": "Team11",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team12",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team13",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team14",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team15",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team16",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team17",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team18",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team19",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team20",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "14:30"
+        },
+        {
+            "day": "dimanche",
+            "start": "14:45",
+            "wod": "WOD7",
+            "heat": 3,
+            "lignes": [
+                {
+                    "equipe": "Team21",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team22",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team23",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team24",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team25",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team26",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team27",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team28",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team29",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team30",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "14:45"
+        },
+        {
+            "day": "dimanche",
+            "start": "15:00",
+            "wod": "WOD7",
+            "heat": 4,
+            "lignes": [
+                {
+                    "equipe": "Team31",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team32",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team33",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team34",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team35",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team36",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team37",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team38",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team39",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team40",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "15:00"
+        },
+        {
+            "day": "dimanche",
+            "start": "15:15",
+            "wod": "WOD7",
+            "heat": 5,
+            "lignes": [
+                {
+                    "equipe": "Team41",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team42",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team43",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team44",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team45",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team46",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team47",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team48",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team49",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team50",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "15:15"
+        },
+        {
+            "day": "dimanche",
+            "start": "15:30",
+            "wod": "WOD7",
+            "heat": 6,
+            "lignes": [
+                {
+                    "equipe": "Team51",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team52",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team53",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team54",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team55",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team56",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team57",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team58",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team59",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team60",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "15:30"
+        },
+        {
+            "day": "dimanche",
+            "start": "15:45",
+            "wod": "WOD7",
+            "heat": 7,
+            "lignes": [
+                {
+                    "equipe": "Team61",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team62",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team63",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team64",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team65",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team66",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team67",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team68",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team69",
+                    "juge": "",
+                    "build": ""
+                },
+                {
+                    "equipe": "Team70",
+                    "juge": "",
+                    "build": ""
+                }
+            ],
+            "jour": "dimanche",
+            "heure": "15:45"
+        }
+    ]
+}

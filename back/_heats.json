@@ -1,0 +1,2786 @@
+[
+    {
+        "day": "samedi",
+        "start": "09:00",
+        "wod": "WOD1",
+        "heat": 1,
+        "lignes": [
+            {
+                "equipe": "Team01",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team02",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team03",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team04",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team05",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            },
+            {
+                "equipe": "Team06",
+                "juge": "juge25.test@dummy.com",
+                "build": "build25.test@dummy.com"
+            },
+            {
+                "equipe": "Team07",
+                "juge": "juge26.test@dummy.com",
+                "build": "build26.test@dummy.com"
+            },
+            {
+                "equipe": "Team08",
+                "juge": "juge27.test@dummy.com",
+                "build": "build27.test@dummy.com"
+            },
+            {
+                "equipe": "Team09",
+                "juge": "juge29.test@dummy.com",
+                "build": "build28.test@dummy.com"
+            },
+            {
+                "equipe": "Team10",
+                "juge": "juge3.test@dummy.com",
+                "build": "build29.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "09:15",
+        "wod": "WOD1",
+        "heat": 2,
+        "lignes": [
+            {
+                "equipe": "Team11",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team12",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team13",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team14",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team15",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team16",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team17",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team18",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            },
+            {
+                "equipe": "Team19",
+                "juge": "juge25.test@dummy.com",
+                "build": "build25.test@dummy.com"
+            },
+            {
+                "equipe": "Team20",
+                "juge": "juge26.test@dummy.com",
+                "build": "build26.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "09:30",
+        "wod": "WOD1",
+        "heat": 3,
+        "lignes": [
+            {
+                "equipe": "Team21",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team22",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team23",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team24",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team25",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team26",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team27",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team28",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team29",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team30",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "09:45",
+        "wod": "WOD1",
+        "heat": 4,
+        "lignes": [
+            {
+                "equipe": "Team31",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team32",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team33",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team34",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team35",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team36",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team37",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team38",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team39",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team40",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "10:00",
+        "wod": "WOD1",
+        "heat": 5,
+        "lignes": [
+            {
+                "equipe": "Team41",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team42",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team43",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team44",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team45",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team46",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team47",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team48",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team49",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team50",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "10:15",
+        "wod": "WOD1",
+        "heat": 6,
+        "lignes": [
+            {
+                "equipe": "Team51",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team52",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team53",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team54",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team55",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team56",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team57",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team58",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team59",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team60",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "10:30",
+        "wod": "WOD1",
+        "heat": 7,
+        "lignes": [
+            {
+                "equipe": "Team61",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team62",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team63",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team64",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team65",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team66",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team67",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team68",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team69",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team70",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "10:37",
+        "wod": "WOD2",
+        "heat": 1,
+        "lignes": [
+            {
+                "equipe": "Team01",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team02",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team03",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team04",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team05",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team06",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team07",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team08",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team09",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team10",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "10:45",
+        "wod": "WOD2",
+        "heat": 2,
+        "lignes": [
+            {
+                "equipe": "Team11",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team12",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team13",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team14",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team15",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team16",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team17",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team18",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team19",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team20",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "11:00",
+        "wod": "WOD2",
+        "heat": 3,
+        "lignes": [
+            {
+                "equipe": "Team21",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team22",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team23",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team24",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team25",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team26",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team27",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team28",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team29",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team30",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "11:15",
+        "wod": "WOD2",
+        "heat": 4,
+        "lignes": [
+            {
+                "equipe": "Team31",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team32",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team33",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team34",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team35",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team36",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team37",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team38",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team39",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team40",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "11:30",
+        "wod": "WOD2",
+        "heat": 5,
+        "lignes": [
+            {
+                "equipe": "Team41",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team42",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team43",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team44",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team45",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team46",
+                "juge": "juge1.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team47",
+                "juge": "juge10.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team48",
+                "juge": "juge21.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team49",
+                "juge": "juge22.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team50",
+                "juge": "juge23.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "11:45",
+        "wod": "WOD2",
+        "heat": 6,
+        "lignes": [
+            {
+                "equipe": "Team51",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team52",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team53",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team54",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team55",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team56",
+                "juge": "juge1.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team57",
+                "juge": "juge10.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team58",
+                "juge": "juge21.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team59",
+                "juge": "juge22.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team60",
+                "juge": "juge23.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "12:00",
+        "wod": "WOD2",
+        "heat": 7,
+        "lignes": [
+            {
+                "equipe": "Team61",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team62",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team63",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team64",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team65",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team66",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team67",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team68",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team69",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team70",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "12:15",
+        "wod": "WOD3",
+        "heat": 1,
+        "lignes": [
+            {
+                "equipe": "Team01",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team02",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team03",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team04",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team05",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team06",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team07",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team08",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team09",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team10",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "12:30",
+        "wod": "WOD3",
+        "heat": 2,
+        "lignes": [
+            {
+                "equipe": "Team11",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team12",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team13",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team14",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team15",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team16",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team17",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team18",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team19",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team20",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "12:45",
+        "wod": "WOD3",
+        "heat": 3,
+        "lignes": [
+            {
+                "equipe": "Team21",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team22",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team23",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team24",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team25",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team26",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team27",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team28",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team29",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team30",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "13:00",
+        "wod": "WOD3",
+        "heat": 4,
+        "lignes": [
+            {
+                "equipe": "Team31",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team32",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team33",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team34",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team35",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team36",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team37",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team38",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team39",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team40",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "13:15",
+        "wod": "WOD3",
+        "heat": 5,
+        "lignes": [
+            {
+                "equipe": "Team41",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team42",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team43",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team44",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team45",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team46",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team47",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team48",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team49",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team50",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "13:30",
+        "wod": "WOD3",
+        "heat": 6,
+        "lignes": [
+            {
+                "equipe": "Team51",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team52",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team53",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team54",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team55",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team56",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team57",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team58",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team59",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team60",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "13:45",
+        "wod": "WOD3",
+        "heat": 7,
+        "lignes": [
+            {
+                "equipe": "Team61",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team62",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team63",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team64",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team65",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team66",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team67",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team68",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team69",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team70",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "14:00",
+        "wod": "WOD4",
+        "heat": 1,
+        "lignes": [
+            {
+                "equipe": "Team01",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team02",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team03",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team04",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team05",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team06",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team07",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team08",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team09",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team10",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "14:15",
+        "wod": "WOD4",
+        "heat": 2,
+        "lignes": [
+            {
+                "equipe": "Team11",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team12",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team13",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team14",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team15",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team16",
+                "juge": "juge10.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team17",
+                "juge": "juge21.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team18",
+                "juge": "juge22.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team19",
+                "juge": "juge23.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team20",
+                "juge": "juge25.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "14:30",
+        "wod": "WOD4",
+        "heat": 3,
+        "lignes": [
+            {
+                "equipe": "Team21",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team22",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team23",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team24",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team25",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team26",
+                "juge": "juge10.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team27",
+                "juge": "juge21.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team28",
+                "juge": "juge22.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team29",
+                "juge": "juge23.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team30",
+                "juge": "juge25.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "14:45",
+        "wod": "WOD4",
+        "heat": 4,
+        "lignes": [
+            {
+                "equipe": "Team31",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team32",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team33",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team34",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team35",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team36",
+                "juge": "juge10.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team37",
+                "juge": "juge21.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team38",
+                "juge": "juge22.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team39",
+                "juge": "juge23.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team40",
+                "juge": "juge25.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "15:00",
+        "wod": "WOD4",
+        "heat": 5,
+        "lignes": [
+            {
+                "equipe": "Team41",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team42",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team43",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team44",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team45",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team46",
+                "juge": "juge10.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team47",
+                "juge": "juge21.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team48",
+                "juge": "juge22.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team49",
+                "juge": "juge23.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team50",
+                "juge": "juge25.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "15:15",
+        "wod": "WOD4",
+        "heat": 6,
+        "lignes": [
+            {
+                "equipe": "Team51",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team52",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team53",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team54",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team55",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team56",
+                "juge": "juge10.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team57",
+                "juge": "juge21.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team58",
+                "juge": "juge22.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team59",
+                "juge": "juge23.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team60",
+                "juge": "juge25.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "samedi",
+        "start": "15:30",
+        "wod": "WOD4",
+        "heat": 7,
+        "lignes": [
+            {
+                "equipe": "Team61",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team62",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team63",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team64",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team65",
+                "juge": "juge1.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team66",
+                "juge": "juge10.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team67",
+                "juge": "juge21.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team68",
+                "juge": "juge22.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team69",
+                "juge": "juge23.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team70",
+                "juge": "juge25.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "09:00",
+        "wod": "WOD5",
+        "heat": 1,
+        "lignes": [
+            {
+                "equipe": "Team01",
+                "juge": "juge4.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team02",
+                "juge": "test2@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team03",
+                "juge": "test@example.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team04",
+                "juge": "juge1.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team05",
+                "juge": "juge10.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team06",
+                "juge": "juge21.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team07",
+                "juge": "juge22.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team08",
+                "juge": "juge23.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team09",
+                "juge": "juge25.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team10",
+                "juge": "juge26.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "09:15",
+        "wod": "WOD5",
+        "heat": 2,
+        "lignes": [
+            {
+                "equipe": "Team11",
+                "juge": "juge4.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team12",
+                "juge": "test2@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team13",
+                "juge": "test@example.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team14",
+                "juge": "juge1.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team15",
+                "juge": "juge10.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team16",
+                "juge": "juge21.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team17",
+                "juge": "juge22.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team18",
+                "juge": "juge23.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team19",
+                "juge": "juge25.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team20",
+                "juge": "juge26.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "09:30",
+        "wod": "WOD5",
+        "heat": 3,
+        "lignes": [
+            {
+                "equipe": "Team21",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team22",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team23",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team24",
+                "juge": "test2@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team25",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team26",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team27",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team28",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team29",
+                "juge": "juge23.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team30",
+                "juge": "juge25.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "09:45",
+        "wod": "WOD5",
+        "heat": 4,
+        "lignes": [
+            {
+                "equipe": "Team31",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team32",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team33",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team34",
+                "juge": "test2@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team35",
+                "juge": "test@example.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team36",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team37",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team38",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team39",
+                "juge": "juge23.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team40",
+                "juge": "juge25.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "10:00",
+        "wod": "WOD5",
+        "heat": 5,
+        "lignes": [
+            {
+                "equipe": "Team41",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team42",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team43",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team44",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team45",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team46",
+                "juge": "test@example.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team47",
+                "juge": "juge1.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team48",
+                "juge": "juge10.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team49",
+                "juge": "juge21.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team50",
+                "juge": "juge22.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "10:15",
+        "wod": "WOD5",
+        "heat": 6,
+        "lignes": [
+            {
+                "equipe": "Team51",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team52",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team53",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team54",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team55",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team56",
+                "juge": "test@example.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team57",
+                "juge": "juge1.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team58",
+                "juge": "juge10.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team59",
+                "juge": "juge21.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team60",
+                "juge": "juge22.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "10:33",
+        "wod": "WOD6",
+        "heat": 1,
+        "lignes": [
+            {
+                "equipe": "Team01",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team02",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team03",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team04",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team05",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team06",
+                "juge": "test@example.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team07",
+                "juge": "juge1.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team08",
+                "juge": "juge10.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team09",
+                "juge": "juge21.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team10",
+                "juge": "juge22.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "10:45",
+        "wod": "WOD6",
+        "heat": 2,
+        "lignes": [
+            {
+                "equipe": "Team11",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team12",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team13",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team14",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team15",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team16",
+                "juge": "test@example.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team17",
+                "juge": "juge1.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team18",
+                "juge": "juge10.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team19",
+                "juge": "juge21.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team20",
+                "juge": "juge22.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "11:15",
+        "wod": "WOD6",
+        "heat": 3,
+        "lignes": [
+            {
+                "equipe": "Team21",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team22",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team23",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team24",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team25",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team26",
+                "juge": "test@example.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team27",
+                "juge": "juge1.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team28",
+                "juge": "juge10.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team29",
+                "juge": "juge21.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team30",
+                "juge": "juge22.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "11:30",
+        "wod": "WOD6",
+        "heat": 4,
+        "lignes": [
+            {
+                "equipe": "Team31",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team32",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team33",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team34",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team35",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team36",
+                "juge": "test@example.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team37",
+                "juge": "juge1.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team38",
+                "juge": "juge10.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team39",
+                "juge": "juge21.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team40",
+                "juge": "juge22.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "11:45",
+        "wod": "WOD6",
+        "heat": 5,
+        "lignes": [
+            {
+                "equipe": "Team41",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team42",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team43",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team44",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team45",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team46",
+                "juge": "test@example.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team47",
+                "juge": "juge1.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team48",
+                "juge": "juge10.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team49",
+                "juge": "juge21.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team50",
+                "juge": "juge22.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "12:00",
+        "wod": "WOD6",
+        "heat": 6,
+        "lignes": [
+            {
+                "equipe": "Team51",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team52",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team53",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team54",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team55",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team56",
+                "juge": "juge1.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team57",
+                "juge": "juge10.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team58",
+                "juge": "juge21.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team59",
+                "juge": "juge22.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team60",
+                "juge": "juge23.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "14:00",
+        "wod": "WOD6",
+        "heat": 7,
+        "lignes": [
+            {
+                "equipe": "Team61",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team62",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team63",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team64",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team65",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team66",
+                "juge": "juge1.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team67",
+                "juge": "juge10.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team68",
+                "juge": "juge21.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team69",
+                "juge": "juge22.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team70",
+                "juge": "juge23.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "14:15",
+        "wod": "WOD7",
+        "heat": 1,
+        "lignes": [
+            {
+                "equipe": "Team01",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team02",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team03",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team04",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team05",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team06",
+                "juge": "juge1.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team07",
+                "juge": "juge10.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team08",
+                "juge": "juge21.test@dummy.com",
+                "build": "build9.test@dummy.com"
+            },
+            {
+                "equipe": "Team09",
+                "juge": "juge22.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team10",
+                "juge": "juge23.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "14:30",
+        "wod": "WOD7",
+        "heat": 2,
+        "lignes": [
+            {
+                "equipe": "Team11",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team12",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team13",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team14",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team15",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team16",
+                "juge": "juge1.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team17",
+                "juge": "juge10.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team18",
+                "juge": "juge21.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team19",
+                "juge": "juge22.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team20",
+                "juge": "juge23.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "14:45",
+        "wod": "WOD7",
+        "heat": 3,
+        "lignes": [
+            {
+                "equipe": "Team21",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team22",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team23",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team24",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team25",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team26",
+                "juge": "juge1.test@dummy.com",
+                "build": "build7.test@dummy.com"
+            },
+            {
+                "equipe": "Team27",
+                "juge": "juge10.test@dummy.com",
+                "build": "build8.test@dummy.com"
+            },
+            {
+                "equipe": "Team28",
+                "juge": "juge21.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team29",
+                "juge": "juge22.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team30",
+                "juge": "juge23.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "15:00",
+        "wod": "WOD7",
+        "heat": 4,
+        "lignes": [
+            {
+                "equipe": "Team31",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team32",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team33",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team34",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team35",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team36",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team37",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team38",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team39",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team40",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "15:15",
+        "wod": "WOD7",
+        "heat": 5,
+        "lignes": [
+            {
+                "equipe": "Team41",
+                "juge": "juge24.test@dummy.com",
+                "build": "build22.test@dummy.com"
+            },
+            {
+                "equipe": "Team42",
+                "juge": "juge28.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team43",
+                "juge": "juge4.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team44",
+                "juge": "juge40.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team45",
+                "juge": "test2@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team46",
+                "juge": "juge1.test@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team47",
+                "juge": "juge10.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team48",
+                "juge": "juge21.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team49",
+                "juge": "juge22.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team50",
+                "juge": "juge23.test@dummy.com",
+                "build": "build23.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "15:30",
+        "wod": "WOD7",
+        "heat": 6,
+        "lignes": [
+            {
+                "equipe": "Team51",
+                "juge": "juge24.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team52",
+                "juge": "juge28.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team53",
+                "juge": "juge4.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team54",
+                "juge": "juge40.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team55",
+                "juge": "test2@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team56",
+                "juge": "juge1.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team57",
+                "juge": "juge10.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team58",
+                "juge": "juge21.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team59",
+                "juge": "juge22.test@dummy.com",
+                "build": "build25.test@dummy.com"
+            },
+            {
+                "equipe": "Team60",
+                "juge": "juge23.test@dummy.com",
+                "build": "build26.test@dummy.com"
+            }
+        ]
+    },
+    {
+        "day": "dimanche",
+        "start": "15:45",
+        "wod": "WOD7",
+        "heat": 7,
+        "lignes": [
+            {
+                "equipe": "Team61",
+                "juge": "juge24.test@dummy.com",
+                "build": "build24.test@dummy.com"
+            },
+            {
+                "equipe": "Team62",
+                "juge": "juge28.test@dummy.com",
+                "build": "build4.test@dummy.com"
+            },
+            {
+                "equipe": "Team63",
+                "juge": "juge4.test@dummy.com",
+                "build": "build5.test@dummy.com"
+            },
+            {
+                "equipe": "Team64",
+                "juge": "juge40.test@dummy.com",
+                "build": "build6.test@dummy.com"
+            },
+            {
+                "equipe": "Team65",
+                "juge": "test2@dummy.com",
+                "build": "build1.test@dummy.com"
+            },
+            {
+                "equipe": "Team66",
+                "juge": "juge1.test@dummy.com",
+                "build": "build10.test@dummy.com"
+            },
+            {
+                "equipe": "Team67",
+                "juge": "juge10.test@dummy.com",
+                "build": "build2.test@dummy.com"
+            },
+            {
+                "equipe": "Team68",
+                "juge": "juge21.test@dummy.com",
+                "build": "build21.test@dummy.com"
+            },
+            {
+                "equipe": "Team69",
+                "juge": "juge22.test@dummy.com",
+                "build": "build25.test@dummy.com"
+            },
+            {
+                "equipe": "Team70",
+                "juge": "juge23.test@dummy.com",
+                "build": "build26.test@dummy.com"
+            }
+        ]
+    }
+]

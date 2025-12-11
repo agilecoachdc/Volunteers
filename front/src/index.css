@@ -1,0 +1,210 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================
+   THEME & COLORS (modifiable ici)
+   =========================
+   Pour chaque rôle, tu as:
+   - --role-*-bg : couleur de fond
+   - --role-*-fg : couleur de texte
+*/
+:root {
+  /* Dispo (OK) */
+  --role-ok-bg: #dcfce7;   /* vert pastel */
+  --role-ok-fg: #065f46;   /* vert foncé lisible */
+
+  /* Juge */
+  --role-juge-bg: #78866b; /* kaki clair */
+  --role-juge-fg: #ffffff; /* blanc */
+  
+  /* Build */
+  --role-build-bg: #ebe0c6; /* beige */
+  --role-build-fg: #000000; /* noir */
+
+  /* Staff */
+  --role-staff-bg: #ffeb3b; /* jaune vif */
+  --role-staff-fg: #78866b; /* kaki clair */
+}
+
+/* =========================
+   BASE TYPO & LAYOUT
+   ========================= */
+:root {
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
+}
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: #111;
+  background: #fafafa;
+  font-size: 10px;
+}
+h1 { font-size: 14px; margin: 0; }
+h2 { font-size: 12px; margin: 0; }
+a { color: #111; text-decoration: none; }
+button { cursor: pointer; background: none; border: none; }
+
+/* Card */
+.pastel-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+/* Light utils */
+.text-sm { font-size: 10px; }
+.text-xs { font-size: 9px; }
+.text-xl { font-size: 14px; }
+.font-semibold { font-weight: 600; }
+.mb-2 { margin-bottom: 6px; }
+.mb-3 { margin-bottom: 8px; }
+.mt-3 { margin-top: 8px; }
+.max-w-6xl { max-width: 72rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.p-4 { padding: 12px; }
+.p-3 { padding: 8px; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-2 { gap: 6px; }
+.gap-3 { gap: 8px; }
+.border { border: 1px solid #e5e7eb; }
+.border-b { border-bottom: 1px solid #e5e7eb; }
+.rounded { border-radius: 8px; }
+.bg-white { background: #fff; }
+.sticky { position: sticky; }
+.top-0 { top: 0; }
+.z-50 { z-index: 50; }
+
+/* =========================
+   BUTTONS / INPUTS (COMPACT)
+   ========================= */
+.btn { padding: 2px 6px; border: 1px solid #e5e7eb; border-radius: 6px; background: #f3f4f6; font-size: 10px; }
+.btn--primary { background: #111; color: #fff; border-color: #111; }
+.btn--danger { background: #fee2e2; border-color: #fecaca; }
+.input { border: 1px solid #e5e7eb; border-radius: 7px; padding: 2px 6px; width: 100%; font-size: 10px; }
+
+/* =========================
+   MES DISPONIBILITÉS (HORIZONTAL)
+   ========================= */
+.dispos-hz { display: grid; gap: 6px; }
+.dispos-row { display: grid; grid-template-columns: 58px 1fr; align-items: center; gap: 6px; }
+.dispos-day { font-weight: 600; text-transform: capitalize; text-align: right; }
+.dispos-scroller { overflow-x: auto; }
+.dispos-line { display: grid; grid-auto-flow: column; grid-auto-columns: 22px; gap: 2px; }
+.dispos-cell {
+  width: 22px; height: 16px; border-radius: 4px; border: 1px solid #e5e7eb;
+  display: flex; align-items: center; justify-content: center;
+  user-select: none; transition: transform .02s ease, box-shadow .1s ease;
+  position: relative; touch-action: none;
+}
+.dispos-cell:active { transform: scale(.985); }
+.hour-label { font-size: 9px; line-height: 1; color: #374151; white-space: nowrap; }
+
+/* Etats (OK / Pas dispo) */
+.role-none  { background: #ffffff; color: #6b7280; }
+.role-dispo { background: var(--role-ok-bg); color: var(--role-ok-fg); }
+
+/* Toolbar pinceau */
+.tools { display: flex; align-items: center; gap: 6px; }
+.tool  { padding: 3px 7px; border-radius: 7px; border: 1px solid #e5e7eb; background: #f3f4f6; }
+.tool--active { border-color: #111; background: #111; color: #fff; }
+
+/* =========================
+   TABLES / PLANNING / HEATS
+   ========================= */
+.table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.table th, .table td { padding: 1px 3px; border-bottom: 1px solid #eef2f7; }
+.cell-compact { display: grid; gap: 0; }
+.line-compact { display: flex; align-items: center; gap: 1px; min-height: 12px; }
+
+/* Pastilles (planning / heats) */
+.chip {
+  display:inline-block; padding:0 3px; border-radius:999px;
+  font-size:10px; line-height:13px;
+}
+.chip-juge  { background: var(--role-juge-bg);  color: var(--role-juge-fg); }
+.chip-build { background: var(--role-build-bg); color: var(--role-build-fg); }
+.chip-staff { background: var(--role-staff-bg); color: var(--role-staff-fg); }
+/* Alerte: équipe saisie mais rôle(s) manquant(s) */
+.slot-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px; }
+.slot--incomplete { background: #fee2e2; border: 2px solid #ef4444; }
+
+
+/* =========================
+   STATS (BAR CHART)
+   ========================= */
+.legend { display:flex; align-items:center; gap:12px; }
+.legend .dot { display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; }
+.dot-juge  { background: var(--role-juge-bg); }
+.dot-build { background: var(--role-build-bg); }
+.dot-staff { background: var(--role-staff-bg); }
+
+.legend-swatch {
+  display:inline-block;
+  width:12px; height:12px;
+  border-radius:3px;
+  vertical-align:middle;
+  margin-right:6px;
+  border:1px solid rgba(0,0,0,.08);
+}
+
+/* role-dispo, chip-juge, chip-build, need-juge, need-build
+   existent déjà dans ton CSS — la pastille hérite juste du background/border */
+
+.stats-row { margin-top: 8px; }
+.stats-title { font-weight: 600; margin-bottom: 6px; }
+.stats-bars {
+  display:flex; gap:8px; overflow:auto; padding:6px 0 12px;
+  align-items:flex-end; height:160px;
+}
+.bar-group {
+  position:relative; width:26px; display:flex; align-items:flex-end; gap:2px;
+  height:100%; /* indispensable pour que .bar {height:%} fonctionne */
+}
+.bar { width:6px; border-radius:2px 2px 0 0; }
+.bar-juge  { background: var(--role-juge-bg); }
+.bar-build { background: var(--role-build-bg); }
+.bar-staff { background: var(--role-staff-bg); }
+.bar-label {
+  position:absolute; bottom:-14px; left:50%; transform:translateX(-50%);
+  font-size:9px; white-space:nowrap;
+}
+
+/* =========================
+   NAVBAR (optionnel)
+   ========================= */
+.header { position: sticky; top: 0; z-index: 50; background: #fff; border-bottom: 1px solid #e5e7eb; }
+.header-inner { max-width: 72rem; margin: 0 auto; padding: 8px 12px; display: flex; gap: 8px; align-items: center; }
+
+/* Surcouche couleur d'attribution réelle sur la grille de dispo */
+.dispos-cell.as-juge  { background: var(--role-juge-bg)  !important; color: var(--role-juge-fg); }
+.dispos-cell.as-build { background: var(--role-build-bg) !important; color: var(--role-build-fg); }
+.dispos-cell.as-staff { background: var(--role-staff-bg) !important; color: var(--role-staff-fg); }
+/* Tooltip numérique sur les barres (affiché au survol) */
+.bar { position: relative; }
+.bar-tip {
+  position: absolute;
+  display: none;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, -4px);
+  background: #111;
+  color: #fff;
+  font-size: 9px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.bar:hover .bar-tip { display: inline-block; }
+.planning-dense .pastel-card > .w-full.overflow-x-auto {
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
